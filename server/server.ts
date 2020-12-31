@@ -3,6 +3,7 @@ import url from 'url';
 import { Controller } from './contracts/controller';
 import { HttpResponse } from './contracts/http-response';
 import { match } from 'path-to-regexp';
+import assert from 'assert';
 
 export enum Methods {
     GET = 'GET',
@@ -44,16 +45,21 @@ private onConnect = (stream: any, headers: any) => {
 	const method = headers[':method'];
 	const { query, pathname } = url.parse(path, true);
 
+	assert(pathname);
+
 	// Colocar esse código no Router
-	let params = {};
-	const route: Route = this.routes.find((route: Route) => {
+	const params = {};
+	const matchedRoute: unknown = this.routes.find((route: Route) => {
 		const matchPath = match(route.pathname, { decode: decodeURIComponent });
 		const matched = matchPath(pathname);
 		if (matched && (route.method === method || route.method === Methods.ALL)) {
-			params = matched.params;
+			Object.assign(params, matched.params);
 			return true;
-		} else throw new Error('');
+		} else return false;
 	});
+
+	assert(matchedRoute);
+	const route = matchedRoute as Route;
 
 	const httpRequest = {
 		headers: headers,
