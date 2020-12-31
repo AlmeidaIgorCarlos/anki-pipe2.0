@@ -1,7 +1,7 @@
 import http2, { Http2Server } from 'http2';
 import url from 'url';
-import { Controller } from './server/contracts/controller';
-import { HttpResponse } from './server/contracts/http-response';
+import { Controller } from './contracts/controller';
+import { HttpResponse } from './contracts/http-response';
 import { match } from 'path-to-regexp';
 
 export enum Methods {
