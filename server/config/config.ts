@@ -1,6 +1,6 @@
-import path from 'path'
+import path from 'path';
 
 export default {
-    sslKey: path.join(__dirname, '..', 'ssl', 'localhost-privkey.pem'),
-    sslCert: path.join(__dirname, '..', 'ssl', 'localhost-cert.pem')
-}
+	sslKey: path.join(__dirname, '..', 'ssl', 'localhost-privkey.pem'),
+	sslCert: path.join(__dirname, '..', 'ssl', 'localhost-cert.pem')
+};

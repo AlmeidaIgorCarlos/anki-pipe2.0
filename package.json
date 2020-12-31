@@ -16,9 +16,12 @@
     "eslint": "^7.16.0",
     "mocha": "^8.2.1",
     "sinon": "^9.2.2",
+    "ts-node": "^9.1.1",
     "typescript": "^4.1.3"
   },
-  "scripts": {},
+  "scripts": {
+    "start-dev": "ts-node index.ts"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AlmeidaIgorCarlos/anki-pipe2.0.git"
