@@ -35,10 +35,10 @@ export class Server {
 
 		if (foundRoute)
 			return foundRoute;
-		else throw new Error();
+		else throw new NotFoundError();
 	}
 
-	public onStream = (stream: ServerHttp2Stream, headers: any): void => {
+	public onConnect = (stream: ServerHttp2Stream, headers: any): void => {
 		const method = headers[':method'];
 		const { query, pathname } = url.parse(headers[':path'], true);
 	
@@ -64,7 +64,7 @@ export class Server {
 
 	private _main = (stream: ServerHttp2Stream, headers: any) => {
 		try {
-			this.onStream(stream, headers);
+			this.onConnect(stream, headers);
 		} catch (err) {
 			if (err instanceof NotFoundError) {
 				notFound(stream);
