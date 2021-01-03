@@ -9,7 +9,6 @@ export class GenericServerError implements ServerError{
 			'content-type': 'text/html; charset=utf-8',
 			':status': 500
 		});
-		const stack = process.env.NODE_ENV !== 'production' ? err.stack : '';
-		stream.end(`<pre><h1>Internal Server Error</h1><br>${stack}</pre>`);
+		stream.end('<pre><h1>Internal Server Error</h1></pre>');
 	}
 }
