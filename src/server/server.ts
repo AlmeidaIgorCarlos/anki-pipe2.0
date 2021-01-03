@@ -1,20 +1,27 @@
 import http2, { Http2SecureServer, ServerHttp2Stream } from 'http2';
 import url from 'url';
-import { HttpResponse } from './contracts/http-response';
 import assert from 'assert';
+import { HttpResponse } from './contracts/http-response';
 import { Route } from './route';
 import { NotFoundController } from './controllers/not-found-controller';
-import { notFound, serverError } from './error-helper';
 import { NotFoundError } from './errors/not-found-error';
 import { ServerOptions } from './contracts/server-options';
+import { ServerError } from './contracts/server-error';
 
 export class Server {
 	private readonly http2: Http2SecureServer;
-	private routes: Route[];
+	private readonly routes: Route[];
+	private readonly genericServerError: ServerError;
+	private readonly notFoundServerError: ServerError;
 
-	constructor(options: ServerOptions, routes?: Route[]) {
+	constructor(
+		options: ServerOptions,
+		routes?: Route[]
+	) {
 		this.http2 = http2.createSecureServer(options);
 		this.routes = routes ? routes : [];
+		this.genericServerError = options.genericServerError;
+		this.notFoundServerError = options.notFoundServerError;
 	}
 
 	public listen (port: number): Http2SecureServer {
@@ -64,9 +71,9 @@ export class Server {
 			this.onConnect(stream, headers);
 		} catch (err) {
 			if (err instanceof NotFoundError) {
-				notFound(stream);
+				this.notFoundServerError.handle(stream, err);
 			} else {
-				serverError(stream, err);
+				this.genericServerError.handle(stream, err);
 			}
 		}
 	}

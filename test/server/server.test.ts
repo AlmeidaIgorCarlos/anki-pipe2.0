@@ -1,6 +1,7 @@
+import 'reflect-metadata';
 import assert from 'assert';
 import { readFileSync } from 'fs';
-import { createStubInstance, stub, spy, createSandbox } from 'sinon';
+import { createStubInstance, stub, spy, createSandbox, mock } from 'sinon';
 import http2, { Http2SecureServer, ServerHttp2Stream } from 'http2';
 import {
 	Server
@@ -10,16 +11,26 @@ import { Methods } from '../../src/server/contracts/methods';
 import { NotFoundController } from '../../src/server/controllers/not-found-controller';
 import { HomeController } from '../../src/server/controllers/home-controller';
 import { NotFoundError } from '../../src/server/errors/not-found-error';
+import { GenericServerError } from '../../src/server/server-errors/generic-server-error';
+import { NotFoundServerError } from '../../src/server/server-errors/not-found-server-error';
+import { ServerOptions } from '../../src/server/contracts/server-options';
 
 describe('server.ts', () => {
 	const key = readFileSync('src/server/ssl/localhost-privkey.pem');
 	const cert = readFileSync('src/server/ssl/localhost-cert.pem');
+	
+	const getServerOptions = (): ServerOptions => ({
+		key,
+		cert,
+		genericServerError: new GenericServerError(),
+		notFoundServerError: new NotFoundServerError()
+	});
 
 	const sinon = createSandbox();
 	let server: Server;
 	beforeEach(() => {
 		sinon.restore();
-		server = new Server({ key, cert });
+		server = new Server(getServerOptions());
 	});
 
 	describe('listen', () => {
@@ -53,6 +64,9 @@ describe('server.ts', () => {
 	describe('findRoute', () => {
 
 		it('Given a server with many routes, if no route is found return false', () => {
+			const server = new Server(getServerOptions(), [
+				new Route(Methods.POST, '/test', new NotFoundController())
+			]);
 			const routeToFind: Route = new Route(Methods.POST, '/', new NotFoundController());
 			assert.throws(() => {
 				server.findRoute(routeToFind);
@@ -60,10 +74,7 @@ describe('server.ts', () => {
 		});
 
 		it('Given a server with many routes, if the wanted route is found it must return the wanted route ', () => {
-			const server = new Server({
-				cert,
-				key
-			}, [
+			const server = new Server(getServerOptions(), [
 				new Route(Methods.POST, '/', new NotFoundController())
 			]);
 
@@ -72,10 +83,7 @@ describe('server.ts', () => {
 		});
 
 		it('Given a server with many routes, if the wanted route is found it must return the wanted route specifically from the server', () => {
-			const server = new Server({
-				cert,
-				key
-			}, [
+			const server = new Server(getServerOptions(), [
 				new Route(Methods.POST, '/', new HomeController())
 			]);
 
@@ -104,7 +112,7 @@ describe('server.ts', () => {
 					statusCode: 200
 				});
 
-			const server = new Server({key, cert}, [
+			const server = new Server(getServerOptions(), [
 				new Route(
 					Methods.GET,
 					'/',
@@ -138,7 +146,7 @@ describe('server.ts', () => {
 					statusCode: 200
 				});
 
-			const server = new Server({key, cert}, [
+			const server = new Server(getServerOptions(), [
 				new Route(
 					Methods.GET,
 					'/',
@@ -170,10 +178,43 @@ describe('server.ts', () => {
 
 	describe('_main', ()=>{
 		it('In case a NotFoundError is thrown, notfound function must be called', ()=>{
+			const options: {
+				key: Buffer
+				cert: Buffer,
+				genericServerError: any,
+				notFoundServerError: any
+			} = getServerOptions();
+
+			options.notFoundServerError.handle = sinon.spy();
+
+			const server = new Server(options);
+
 			sinon.stub(server, 'onConnect')
 				.throws(new NotFoundError());
 
-			assert.fail('Not finished');
+			server._main({} as ServerHttp2Stream, {});
+
+			assert(options.notFoundServerError.handle.called);
+		});
+
+		it('In case a any Error is thrown, GenericServerError handle function must be called', ()=>{
+			const options: {
+				key: Buffer
+				cert: Buffer,
+				genericServerError: any,
+				notFoundServerError: any
+			} = getServerOptions();
+
+			options.genericServerError.handle = sinon.spy();
+
+			const server = new Server(options);
+
+			sinon.stub(server, 'onConnect')
+				.throws(new Error('any'));
+
+			server._main({} as ServerHttp2Stream, {});
+
+			assert(options.genericServerError.handle.called);
 		});
 	});
 });
