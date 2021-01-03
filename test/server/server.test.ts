@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { readFileSync } from 'fs';
 import { spy } from 'sinon';
-import http2, { Http2SecureServer } from 'http2';
+import http2, { Http2SecureServer, ServerHttp2Stream } from 'http2';
 import {
 	Server
 } from '../../src/server/server';
@@ -50,10 +50,10 @@ describe('server.ts', () => {
 	describe('findRoute', () => {
 
 		it('Given a server with many routes, if no route is found return false', () => {
-			const routeToFind: Route = new Route(Methods.POST, '/', new NotFoundController())
+			const routeToFind: Route = new Route(Methods.POST, '/', new NotFoundController());
 			assert.throws(() => {
-				server.findRoute(routeToFind)
-			})
+				server.findRoute(routeToFind);
+			});
 		});
 
 		it('Given a server with many routes, if the wanted route is found it must return the wanted route ', () => {
@@ -64,8 +64,8 @@ describe('server.ts', () => {
 				new Route(Methods.POST, '/', new NotFoundController())
 			]);
 
-			const routeToFind: Route = new Route(Methods.POST, '/', new NotFoundController())
-			assert(server.findRoute(routeToFind))
+			const routeToFind: Route = new Route(Methods.POST, '/', new NotFoundController());
+			assert(server.findRoute(routeToFind));
 		});
 
 		it('Given a server with many routes, if the wanted route is found it must return the wanted route specifically from the server', () => {
@@ -76,14 +76,23 @@ describe('server.ts', () => {
 				new Route(Methods.POST, '/', new HomeController())
 			]);
 
-			const routeToFind: Route = new Route(Methods.POST, '/', new NotFoundController())
-			const foundRoute: Route = server.findRoute(routeToFind)
-			assert(foundRoute.controller instanceof HomeController)
+			const routeToFind: Route = new Route(Methods.POST, '/', new NotFoundController());
+			const foundRoute: Route = server.findRoute(routeToFind);
+			assert(foundRoute.controller instanceof HomeController);
 		});
 
 	});
 
 	describe('onConnect', () => {
-		it('In case pathname is not defined, throw an exception');
+		it('In case pathname is not defined, throw an exception', ()=>{
+			assert.throws(()=>{
+				server.onConnect({} as ServerHttp2Stream, {
+					':method': 'GET',
+					':path': ''
+				});
+			});
+		});
+
+		it('when called, it must return the body from the result of the controller');
 	});
 });

@@ -1,15 +1,10 @@
-import http2, { Http2SecureServer } from 'http2';
+import http2, { Http2SecureServer, ServerHttp2Stream } from 'http2';
 import url from 'url';
-import { Controller } from './contracts/controller';
 import { HttpResponse } from './contracts/http-response';
 import assert from 'assert';
 import { Route } from './route';
 import { NotFoundController } from './controllers/not-found-controller';
-
-export interface ServerOptions {
-	key: Buffer
-	cert: Buffer
-}
+import { ServerOptions } from './contracts/server-options';
 
 export class Server {
 	private readonly http2: Http2SecureServer;
@@ -20,7 +15,7 @@ export class Server {
 		this.routes = routes ? routes : [];
 	}
 
-	public listen = (port: number): Http2SecureServer => {
+	public listen (port: number): Http2SecureServer {
 		this.http2.on('stream', this.onConnect);
 		this.http2.listen(port);
 		return this.http2;
@@ -29,22 +24,22 @@ export class Server {
 	public findRoute(route: Route) {
 		const foundRoute: Route = this.routes.find((fRoute: Route) => {
 			if (route.equals(fRoute))
-				return true
-			else return false
-		}) as Route
+				return true;
+			else return false;
+		}) as Route;
 
 		if (foundRoute)
-			return foundRoute
-		else throw new Error('ERROR_NOT_FOUND')
+			return foundRoute;
+		else throw new Error('ROUTE_NOT_FOUND');
 	}
 
-	public onConnect = (stream: any, headers: any): void => {
+	public onConnect (stream: ServerHttp2Stream, headers: any): void {
 		const method = headers[':method'];
 		const { query, pathname } = url.parse(headers[':path'], true);
 
 		assert(pathname);
 
-		const route: Route = this.findRoute(new Route(method, pathname, new NotFoundController()))
+		const route: Route = this.findRoute(new Route(method, pathname, new NotFoundController()));
 
 		const httpRequest = {
 			headers: headers,

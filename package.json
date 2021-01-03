@@ -23,7 +23,7 @@
   "scripts": {
     "start-dev": "ts-node src/index.ts",
     "dev": "nodemon --watch 'src/' --exec 'ts-node src/index.ts' -e ts",
-    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha --recursive './test/**/*.ts' --require ts-node/register"
+    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' ./node_modules/mocha/bin/mocha --recursive './test/**/*.ts' --require ts-node/register"
   },
   "repository": {
     "type": "git",
