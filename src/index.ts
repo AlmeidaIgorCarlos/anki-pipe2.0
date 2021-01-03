@@ -6,8 +6,8 @@ import config from './server/config/config';
 import fs from 'fs';
 import { Methods } from './server/contracts/methods';
 import { Route } from './server/route';
-import {container} from './container';
-import { TYPES } from './types';
+import {container} from './config/container/container';
+import { TYPES } from './config/container/types';
 import { ServerError } from './server/contracts/server-error';
 
 const server = new http.Server(
