@@ -4,6 +4,8 @@ import { HttpResponse } from './contracts/http-response';
 import assert from 'assert';
 import { Route } from './route';
 import { NotFoundController } from './controllers/not-found-controller';
+import { notFound, serverError } from './error-helper';
+import { NotFoundError } from './errors/not-found-error';
 import { ServerOptions } from './contracts/server-options';
 
 export class Server {
@@ -16,43 +18,56 @@ export class Server {
 	}
 
 	public listen (port: number): Http2SecureServer {
-		this.http2.on('stream', this.onConnect);
+		this.http2.on('stream', this._main);
 		this.http2.listen(port);
 		return this.http2;
 	}
 
-	public findRoute(route: Route) {
+	public findRoute(route: Route) : Route {
 		const foundRoute: Route = this.routes.find((fRoute: Route) => {
-			if (route.equals(fRoute))
+			if (fRoute.equals(route))
 				return true;
 			else return false;
 		}) as Route;
 
 		if (foundRoute)
 			return foundRoute;
-		else throw new Error('ROUTE_NOT_FOUND');
+		else throw new NotFoundError();
 	}
 
-	public onConnect (stream: ServerHttp2Stream, headers: any): void {
+	public onConnect = (stream: ServerHttp2Stream, headers: any): void => {
 		const method = headers[':method'];
 		const { query, pathname } = url.parse(headers[':path'], true);
-
+	
 		assert(pathname);
-
+	
 		const route: Route = this.findRoute(new Route(method, pathname, new NotFoundController()));
 
 		const httpRequest = {
 			headers: headers,
-			body: headers.body,
+			body: headers['body'],
+			params: route.params(pathname),
 			query: query
 		};
-
+	
 		const httpResponse: HttpResponse = route.controller.handle(httpRequest);
-
+	
 		stream.respond({
 			'content-type': 'text/html; charset=utf-8',
 			':status': httpResponse.statusCode
 		});
 		stream.end(httpResponse.body);
+	}
+
+	public _main = (stream: ServerHttp2Stream, headers: any) => {
+		try {
+			this.onConnect(stream, headers);
+		} catch (err) {
+			if (err instanceof NotFoundError) {
+				notFound(stream);
+			} else {
+				serverError(stream, err);
+			}
+		}
 	}
 }
