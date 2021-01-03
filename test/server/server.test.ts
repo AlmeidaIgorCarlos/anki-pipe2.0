@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { readFileSync } from 'fs';
-import { spy } from 'sinon';
+import { createStubInstance, stub, spy, createSandbox } from 'sinon';
 import http2, { Http2SecureServer, ServerHttp2Stream } from 'http2';
 import {
 	Server
@@ -9,13 +9,16 @@ import { Route } from '../../src/server/route';
 import { Methods } from '../../src/server/contracts/methods';
 import { NotFoundController } from '../../src/server/controllers/not-found-controller';
 import { HomeController } from '../../src/server/controllers/home-controller';
+import { NotFoundError } from '../../src/server/errors/not-found-error';
 
 describe('server.ts', () => {
 	const key = readFileSync('src/server/ssl/localhost-privkey.pem');
 	const cert = readFileSync('src/server/ssl/localhost-cert.pem');
 
+	const sinon = createSandbox();
 	let server: Server;
 	beforeEach(() => {
+		sinon.restore();
 		server = new Server({ key, cert });
 	});
 
@@ -93,6 +96,84 @@ describe('server.ts', () => {
 			});
 		});
 
-		it('when called, it must return the body from the result of the controller');
+		it('when called, it must return the body from the result of the controller', ()=>{
+			const homeController = new HomeController;
+			stub(homeController, 'handle')
+				.returns({
+					body: 'HomeControllerResult',
+					statusCode: 200
+				});
+
+			const server = new Server({key, cert}, [
+				new Route(
+					Methods.GET,
+					'/',
+					homeController
+				)
+			]);
+
+			const spyFunction = spy();
+
+			const stream = {
+				respond(){
+					console.log('respond being executed');
+				},
+				end: spyFunction
+			};
+
+			server.onConnect(stream as unknown as ServerHttp2Stream, {
+				':method': 'GET',
+				':path': '/'
+			});
+
+			assert(stream.end.called);
+			assert(stream.end.calledWith(homeController.handle({}).body));
+		});
+
+		it('when called, it must return the statusCode from the result of the controller', ()=>{
+			const homeController = new HomeController;
+			sinon.stub(homeController, 'handle')
+				.returns({
+					body: 'HomeControllerResult',
+					statusCode: 200
+				});
+
+			const server = new Server({key, cert}, [
+				new Route(
+					Methods.GET,
+					'/',
+					homeController
+				)
+			]);
+
+			const spyFunction = sinon.spy();
+
+			const stream = {
+				respond: spyFunction,
+				end(){
+					console.log('end function is being called');
+				}
+			};
+
+			server.onConnect(stream as unknown as ServerHttp2Stream, {
+				':method': 'GET',
+				':path': '/'
+			});
+
+			assert(stream.respond.called);
+			assert(stream.respond.calledWith({
+				'content-type': 'text/html; charset=utf-8',
+				':status': homeController.handle({}).statusCode
+			}));
+		});
+	});
+
+	describe('_main', ()=>{
+		it('In case a NotFoundError is thrown, notfound function must be called', ()=>{
+			sinon.stub(server, 'onConnect')
+				.throws(new NotFoundError());
+
+			assert.fail('Not finished');
+		});
 	});
 });

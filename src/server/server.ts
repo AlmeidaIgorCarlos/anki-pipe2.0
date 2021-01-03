@@ -35,7 +35,7 @@ export class Server {
 		else throw new NotFoundError();
 	}
 
-	public onConnect = (stream: ServerHttp2Stream, headers: any): void => {
+	public onConnect(stream: ServerHttp2Stream, headers: any): void {
 		const method = headers[':method'];
 		const { query, pathname } = url.parse(headers[':path'], true);
 	
