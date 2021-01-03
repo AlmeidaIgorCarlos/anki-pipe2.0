@@ -14,7 +14,7 @@ export class Route {
 		this._controller = controller;
 	}
 
-	get controller() {
+	get controller(): Controller {
 		return this._controller;
 	}
 
@@ -22,9 +22,15 @@ export class Route {
 		const matchPath = match(this._pathName, { decode: decodeURIComponent });
 		const matched = Boolean(matchPath(route._pathName));
 
-		if (matched && route._method === this._method)
-			return true
-		else return false
+		if (matched && (route._method === this._method || this._method === Methods.ALL))
+			return true;
+		else return false;
+	}
+
+	public params(pathname: string): any {
+		const matchPath = match(this._pathName, { decode: decodeURIComponent });
+		const { params } = matchPath(pathname) as any;
+		return params;
 	}
 
 }
