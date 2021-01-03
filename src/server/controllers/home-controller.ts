@@ -1,12 +1,11 @@
-import { Controller } from '../contracts/controller';
 import { HttpRequest } from '../contracts/http-request';
 import { HttpResponse } from '../contracts/http-response';
+import { BaseController } from './base-controller';
+export class HomeController extends BaseController {
+	async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+		const { params } = httpRequest;
+		const data = { id: params.id };
 
-export class HomeController implements Controller {
-	handle (httpRequest: HttpRequest): HttpResponse {
-		return {
-			statusCode: 200,
-			body: 'HOMEPAGE'
-		};
+		return this.render('homepage', data);
 	}
 }

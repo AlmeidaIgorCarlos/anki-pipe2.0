@@ -3,16 +3,18 @@ import url from 'url';
 import assert from 'assert';
 import { HttpResponse } from './contracts/http-response';
 import { Route } from './route';
-import { NotFoundController } from './controllers/not-found-controller';
 import { NotFoundError } from './errors/not-found-error';
 import { ServerOptions } from './contracts/server-options';
 import { ServerError } from './contracts/server-error';
+import { TemplateEngine } from './contracts/template-engine';
+import { BaseController } from './controllers/base-controller';
 
 export class Server {
 	private readonly http2: Http2SecureServer;
 	private readonly routes: Route[];
 	private readonly genericServerError: ServerError;
 	private readonly notFoundServerError: ServerError;
+	public readonly templateEngine: TemplateEngine | undefined;
 
 	constructor(
 		options: ServerOptions,
@@ -22,6 +24,7 @@ export class Server {
 		this.routes = routes ? routes : [];
 		this.genericServerError = options.genericServerError;
 		this.notFoundServerError = options.notFoundServerError;
+		this.templateEngine = options.templateEngine;
 	}
 
 	public listen (port: number): Http2SecureServer {
@@ -42,13 +45,13 @@ export class Server {
 		else throw new NotFoundError();
 	}
 
-	public onConnect(stream: ServerHttp2Stream, headers: any): void {
+	public async onConnect(stream: ServerHttp2Stream, headers: any): Promise<void> {
 		const method = headers[':method'];
 		const { query, pathname } = url.parse(headers[':path'], true);
 	
 		assert(pathname);
 	
-		const route: Route = this.findRoute(new Route(method, pathname, new NotFoundController()));
+		const route: Route = this.findRoute(new Route(method, pathname, new BaseController()));
 
 		const httpRequest = {
 			headers: headers,
@@ -57,7 +60,11 @@ export class Server {
 			query: query
 		};
 	
-		const httpResponse: HttpResponse = route.controller.handle(httpRequest);
+		const httpResponse: HttpResponse = await route.controller.handle(httpRequest);
+
+		if (this.templateEngine) {
+			httpResponse.body = await this.templateEngine.render(httpResponse.body, httpResponse.data);
+		}
 	
 		stream.respond({
 			'content-type': 'text/html; charset=utf-8',
@@ -66,9 +73,9 @@ export class Server {
 		stream.end(httpResponse.body);
 	}
 
-	public _main = (stream: ServerHttp2Stream, headers: any) => {
+	public _main = async (stream: ServerHttp2Stream, headers: any) => {
 		try {
-			this.onConnect(stream, headers);
+			await this.onConnect(stream, headers);
 		} catch (err) {
 			if (err instanceof NotFoundError) {
 				this.notFoundServerError.handle(stream, err);
