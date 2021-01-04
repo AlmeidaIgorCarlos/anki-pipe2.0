@@ -27,9 +27,9 @@ export class Route {
 		else return false;
 	}
 
-	public params(pathname: string): any {
+	public params(pathName: string): any {
 		const matchPath = match(this._pathName, { decode: decodeURIComponent });
-		const { params } = matchPath(pathname) as any;
+		const { params } = matchPath(pathName) as any;
 		return params;
 	}
 

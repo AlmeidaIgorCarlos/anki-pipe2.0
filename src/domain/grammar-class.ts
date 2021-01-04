@@ -1,5 +1,3 @@
-class GrammarClass{
+export class GrammarClass{
 
 }
-
-export default GrammarClass;

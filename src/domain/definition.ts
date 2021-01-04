@@ -1,5 +1,3 @@
-class Definition{
+export class Definition{
 
 }
-
-export default Definition;

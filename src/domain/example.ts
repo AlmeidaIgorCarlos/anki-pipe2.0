@@ -1,5 +1,3 @@
-class Example{
+export class Example{
 
 }
-
-export default Example;

@@ -1,7 +1,13 @@
-import { Z_NEED_DICT } from 'zlib';
+import { Definition } from './definition';
+import { Example } from './example';
+import { GrammarClass } from './grammar-class';
+import { Pronunciation } from './pronunciation';
 
-interface Dictionary{
+export interface Dictionary{
+    getDictionaryContent(word: string): Promise<string>
+    searchPronunciation(): Pronunciation
+    searchDefinitions(): Definition[]
+    searchExamples(): Example[]
+    searchGrammarClasses(): GrammarClass[]
 
 }
-
-export default Dictionary;

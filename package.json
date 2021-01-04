@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.ts",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.5",
     "ejs": "^3.1.5",
     "inversify": "^5.0.5",
     "path-to-regexp": "^6.2.0",
