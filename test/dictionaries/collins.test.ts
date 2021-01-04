@@ -3,7 +3,6 @@ import {createSandbox} from 'sinon';
 import { Collins } from '../../src/dictionaries/collins';
 import { Dictionary } from '../../src/domain/dictionary';
 import { NotFoundError } from '../../src/server/errors/not-found-error';
-import cheerio from 'cheerio';
 import { Pronunciation } from '../../src/domain/pronunciation';
 import { UninitializedError } from '../../src/server/errors/uninitialized-error';
 
@@ -13,14 +12,6 @@ describe('collins.ts', ()=>{
 	beforeEach(()=>{
 		sinon.restore();   
 	});
-    
-	// describe('describe', ()=>{
-	// 	it('Once it is called, it must call the getDictionaryContent with the word that is has been given', ()=>{
-
-	// 	});
-        
-	// 	it('Once it is called, it must start the $ attribute');
-	// });
     
 	describe('getDictionaryContent', ()=>{
 		it('Once it is called, it must return the content from the dictionary site', async ()=>{
