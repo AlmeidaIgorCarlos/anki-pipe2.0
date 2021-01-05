@@ -9,5 +9,4 @@ export interface Dictionary{
     searchDefinitions(): Definition[]
     searchExamples(): Example[]
     searchGrammarClasses(): GrammarClass[]
-
 }

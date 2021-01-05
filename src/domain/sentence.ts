@@ -10,6 +10,7 @@ export class Sentence {
      * Constructor of the Sentence class
      * @param {string} sentence The main sentence of the card
      * @param {string} word The desired word that the user wants to search the meaning
+     * @param {object} dictionary Instance of an implementation of the Dictionary interface
      */
     public constructor(
     	sentence: string,
