@@ -18,10 +18,10 @@ export class Collins implements Dictionary{
     	this._word = word;
     }
 
-    public getDictionaryContent(word: string): Promise<string>{
+    public getDictionaryContent(): Promise<string>{
     	let websiteContent: string;
     	return new Promise((resolve, reject)=>{
-    		https.get(`${this.dictionaryUrl}/${word}`, (res)=>{
+    		https.get(`${this.dictionaryUrl}/${this._word}`, (res)=>{
     			res.on('data', data => {
     				websiteContent += String(data);
     			});

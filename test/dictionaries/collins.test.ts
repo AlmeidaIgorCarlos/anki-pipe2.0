@@ -16,14 +16,14 @@ describe('collins.ts', ()=>{
 	describe('getDictionaryContent', ()=>{
 		it('Once it is called, it must return the content from the dictionary site', async ()=>{
 			const collinsDictionary = new Collins('hello');
-			const dictionaryContent = await collinsDictionary.getDictionaryContent('hello');
+			const dictionaryContent = await collinsDictionary.getDictionaryContent();
 			assert(typeof dictionaryContent === 'string'); 
 		});
         
 		it('Once it is called, if something goes wrong in the request an exception must be thrown', async ()=>{
 			try {
-				const collinsDictionary = new Collins('hello');
-				await collinsDictionary.getDictionaryContent('hello/test/test');
+				const collinsDictionary = new Collins('hello/test/test');
+				await collinsDictionary.getDictionaryContent();
 				assert.fail('EXCEPTION_NOT_FOUND');
 			} catch (error) {
 				assert(error instanceof NotFoundError);    
@@ -35,7 +35,7 @@ describe('collins.ts', ()=>{
 	describe('searchPronunciation', ()=>{
 		it('When called it must return an instance of Pronunciation with property pronunciation equal to the content found at the collins dictionary', async ()=>{
 			const collins: Dictionary = new Collins('hello');
-			await collins.getDictionaryContent('hello');
+			await collins.getDictionaryContent();
     
 			const pronunciation: Pronunciation = collins.searchPronunciation();
             
