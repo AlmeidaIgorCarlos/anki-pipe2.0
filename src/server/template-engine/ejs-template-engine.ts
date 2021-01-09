@@ -4,7 +4,7 @@ import { renderFile } from 'ejs';
 import { TemplateEngineOptions } from '../contracts/template-engine-options';
 import path from 'path';
 
-export class Ejs implements TemplateEngine {
+export class EjsTemplateEngine implements TemplateEngine {
 
     private readonly ejsRender: any;
     private readonly options: TemplateEngineOptions;

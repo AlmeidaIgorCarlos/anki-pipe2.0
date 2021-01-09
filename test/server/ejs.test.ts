@@ -1,12 +1,12 @@
 import 'reflect-metadata';
 import assert from 'assert';
 import sinon from 'sinon';
-import { Ejs } from '../../src/server/template-engine/ejs';
+import { EjsTemplateEngine } from '../../src/server/template-engine/ejs-template-engine';
 import path from 'path';
 
 describe('generic-server-error.ts', () => {
 	it('render should return template if view satisfied the condition', async () => {
-		const ejs = new Ejs({
+		const ejs = new EjsTemplateEngine({
 			dir: path.join(__dirname, 'view'),
 			ext: 'ejs'
 		});
@@ -20,7 +20,7 @@ describe('generic-server-error.ts', () => {
 	});
 
 	it('Given return view if the condition is not satisfied', async () => {
-		const ejs = new Ejs({
+		const ejs = new EjsTemplateEngine({
 			dir: path.join(__dirname, 'view'),
 			ext: 'ejs'
 		});
@@ -34,7 +34,7 @@ describe('generic-server-error.ts', () => {
 	});
 
 	it('Should return true if view satisfied condition', () => {
-		const ejs = new Ejs({
+		const ejs = new EjsTemplateEngine({
 			dir: path.join(__dirname, 'view'),
 			ext: 'ejs'
 		});
@@ -42,7 +42,7 @@ describe('generic-server-error.ts', () => {
 		assert(ejs.isValid('@index'));
 	});
 	it('Should return false if view does not satisfied condition', () => {
-		const ejs = new Ejs({
+		const ejs = new EjsTemplateEngine({
 			dir: path.join(__dirname, 'view'),
 			ext: 'ejs'
 		});

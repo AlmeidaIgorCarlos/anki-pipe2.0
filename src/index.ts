@@ -8,13 +8,7 @@ import { Route } from './server/route';
 import {container} from './config/container/container';
 import { TYPES } from './config/container/types';
 import { ServerError } from './server/contracts/server-error';
-import { Ejs } from './server/template-engine/ejs';
-import configTemplateEngine from './config/template-engine';
-
-const ejs = new Ejs({
-	dir: configTemplateEngine.dirname,
-	ext: configTemplateEngine.ext
-});
+import { makeEjsTemplateEngine } from './server/factories/ejs-template-engine-factory';
 
 const server = new http.Server(
 	{
@@ -22,7 +16,7 @@ const server = new http.Server(
 		cert: fs.readFileSync(config.sslCert),
 		genericServerError: container.get<ServerError>(TYPES.GenericServerError),
 		notFoundServerError: container.get<ServerError>(TYPES.NotFoundServerError),
-		templateEngine: ejs
+		templateEngine: makeEjsTemplateEngine()
 	}, [
 		new Route(
 			Methods.GET,
