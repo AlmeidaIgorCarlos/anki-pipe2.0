@@ -38,13 +38,31 @@ export class Collins implements Dictionary{
     	});
     }
 
-    public searchPronunciation(): Pronunciation{
+    public async searchPronunciation(): Promise<Pronunciation>{
     	if(!this.$)
     		throw new UninitializedError();
 			
-    	let pronunciation:string = this.$('.pron').text();
-    	pronunciation = pronunciation.split('\n')[0];
-    	return new Pronunciation(pronunciation, Buffer.from(''));
+    	const pronunciationContentText: string = this.$('.pron').text();
+    	const pronunciationText = pronunciationContentText.split('\n')[0];
+
+    	const pronunciationDownloadUrl: string = this.$('.sound').attr('data-src-mp3');
+
+    	const soundBuffer: Buffer = await new Promise((resolve)=>{
+    		https.get(pronunciationDownloadUrl, res => {
+    			const soundBuffers: Buffer[] = [];
+				
+    			res.on('data', chunk => {
+    				console.log(chunk);
+    				soundBuffers.push(chunk);	
+    			});
+				
+    			res.on('end', ()=>{
+    				resolve(Buffer.concat(soundBuffers));
+    			});
+    		});
+    	});
+		
+    	return new Pronunciation(pronunciationText, soundBuffer);
     }
 	
     public searchDefinitions(): Definition[] {

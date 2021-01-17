@@ -1,11 +1,10 @@
 import assert from 'assert';
-import { createStubInstance, createSandbox } from 'sinon';
+import { createSandbox } from 'sinon';
 import { Collins } from '../../src/dictionaries/collins';
-import { Card } from '../../src/domain/card';
 import { Dictionary } from '../../src/domain/dictionary';
 import {Sentence} from '../../src/domain/sentence';
 
-describe('sentence.ts', ()=>{
+describe.skip('sentence.ts', ()=>{
 
 	const sinon = createSandbox();
 	beforeEach(()=>{

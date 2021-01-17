@@ -37,7 +37,7 @@ describe('collins.ts', ()=>{
 			const collins: Dictionary = new Collins('hello');
 			await collins.getDictionaryContent();
     
-			const pronunciation: Pronunciation = collins.searchPronunciation();
+			const pronunciation: Pronunciation = await collins.searchPronunciation();
             
 			assert.strictEqual(pronunciation.pronunciation, 'heloʊ');
 		});
@@ -51,6 +51,6 @@ describe('collins.ts', ()=>{
 				assert(error instanceof UninitializedError);
 			}
 		});
-	});
+	}).timeout(0);
 
 });
