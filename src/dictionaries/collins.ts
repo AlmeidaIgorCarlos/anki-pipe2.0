@@ -1,12 +1,12 @@
-import {Dictionary} from '../domain/dictionary';
 import https from 'https';
+import {Dictionary} from '../domain/dictionary';
 import cheerio from 'cheerio';
 import { NotFoundError } from '../server/errors/not-found-error';
 import { Pronunciation } from '../domain/pronunciation';
 import { Definition } from '../domain/definition';
-import { Example } from '../domain/example';
 import { GrammarClass } from '../domain/grammar-class';
 import { UninitializedError } from '../server/errors/uninitialized-error';
+import { Example } from '../domain/example';
 
 export class Collins implements Dictionary{
 
@@ -52,7 +52,6 @@ export class Collins implements Dictionary{
     			const soundBuffers: Buffer[] = [];
 				
     			res.on('data', chunk => {
-    				console.log(chunk);
     				soundBuffers.push(chunk);	
     			});
 				
@@ -65,16 +64,67 @@ export class Collins implements Dictionary{
     	return new Pronunciation(pronunciationText, soundBuffer);
     }
 	
-    public searchDefinitions(): Definition[] {
-    	throw new Error('Method not implemented.');
-    }
-	
-    public searchExamples(): Example[] {
-    	throw new Error('Method not implemented.');
+    public searchDefinitions(): Promise<Definition[]> {
+    	if(!this.$)
+    		throw new UninitializedError();
+			
+    	const definitionsContent = this.$('.def').text().replace(/(\r\n|\r|\n)/g, '').split('.');
+
+    	return definitionsContent.map((definition: string) => new Definition(definition));
     }
 	
     public searchGrammarClasses(): GrammarClass[] {
-    	throw new Error('Method not implemented.');
-    }
+    	if(!this.$)
+    		throw new UninitializedError();
 
+    	const cheerioElements = this.$('.hom>.gramGrp>.pos');
+		
+    	const grammarClasses: GrammarClass[] = [];
+
+    	for(let i=0; i<cheerioElements.length; i++){
+    		grammarClasses.push(new GrammarClass(cheerioElements[i].children[0].data));
+    	}
+
+    	return grammarClasses;
+    }
+	
+    public async searchExamples(): Promise<Example[]> {
+    	if(!this.$)
+    		throw new UninitializedError();
+			
+    	const exampleNodes = this.$('.type-example');
+    	const examples: Example[] = [];
+		
+    	for(let i=0;i<exampleNodes.length;i++){
+    		let exampleText: string;
+			
+    		if(exampleNodes[i].children[0].data){
+    			exampleText = exampleNodes[i].children[0].data;
+    			examples.push(new Example(exampleText, Buffer.from('')));
+    		}
+    		else{
+    			exampleText = exampleNodes[i].children[0].children[0].data;
+				
+    		const exampleUrl = exampleNodes[i].children[1].children[1].attribs['data-src-mp3'];
+    		const soundBuffer: Buffer = await new Promise((resolve)=>{
+    			https.get(exampleUrl, res => {
+    				const soundBuffers: Buffer[] = [];
+					
+    				res.on('data', chunk => {
+    					soundBuffers.push(chunk);	
+    				});
+					
+    				res.on('end', ()=>{
+    					resolve(Buffer.concat(soundBuffers));
+    				});
+    			});
+    		});
+			
+    			examples.push(new Example(exampleText, soundBuffer));
+    		}
+			
+    	}
+			
+    	return examples;
+    }
 }

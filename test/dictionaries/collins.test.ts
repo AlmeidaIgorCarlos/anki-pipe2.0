@@ -5,12 +5,15 @@ import { Dictionary } from '../../src/domain/dictionary';
 import { NotFoundError } from '../../src/server/errors/not-found-error';
 import { Pronunciation } from '../../src/domain/pronunciation';
 import { UninitializedError } from '../../src/server/errors/uninitialized-error';
+import { GrammarClass } from '../../src/domain/grammar-class';
+import { Definition } from '../../src/domain/definition';
+import { Example } from '../../src/domain/example';
 
 describe('collins.ts', ()=>{
 	const sinon = createSandbox();
-    
+
 	beforeEach(()=>{
-		sinon.restore();   
+		sinon.restore();
 	});
     
 	describe('getDictionaryContent', ()=>{
@@ -30,7 +33,7 @@ describe('collins.ts', ()=>{
 			}
 		});
         
-	}).timeout(0);
+	});
     
 	describe('searchPronunciation', ()=>{
 		it('When called it must return an instance of Pronunciation with property pronunciation equal to the content found at the collins dictionary', async ()=>{
@@ -42,15 +45,77 @@ describe('collins.ts', ()=>{
 			assert.strictEqual(pronunciation.pronunciation, 'heloʊ');
 		});
         
-		it('Once it is called and cheerio instance is not loaded, throw an exception', ()=>{
+		it('Once it is called and cheerio instance is not loaded, throw an exception', async ()=>{
 			try {
 				const collins: Dictionary = new Collins('hello');
-				collins.searchPronunciation();
+				await collins.searchPronunciation();
 				assert.fail('EXCEPTION_NOT_FOUND');
 			} catch (error) {
 				assert(error instanceof UninitializedError);
 			}
 		});
-	}).timeout(0);
+	});
 
+	describe('searchGrammarClasses', ()=>{
+		it('Once it is called and cheerio instance is not loaded, throw an exception', ()=>{
+			try {
+				const collins: Dictionary = new Collins('hello');
+				collins.searchGrammarClasses();
+				assert.fail('EXCEPTION_NOT_FOUND');
+			} catch (error) {
+				assert(error instanceof UninitializedError);
+			}
+		});
+
+		it('Once it is called it must return an array of instances of GrammarClass', async ()=>{
+			const collins: Dictionary = new Collins('hello');
+			await collins.getDictionaryContent();
+
+			const grammarClasses: GrammarClass[] = await collins.searchGrammarClasses();
+			
+			assert(grammarClasses.length === 4);
+		});
+	});
+
+	describe('searchDefinitions', ()=>{
+		it('Once it is called and cheerio instance is not loaded, throw an exception', ()=>{
+			try {
+				const collins: Dictionary = new Collins('hello');
+				collins.searchDefinitions();
+				assert.fail('EXCEPTION_NOT_FOUND');
+			} catch (error) {
+				assert(error instanceof UninitializedError);
+			}
+		});
+
+		it('Once it is called it must return an array of instances of GrammarClass', async ()=>{
+			const collins: Dictionary = new Collins('hello');
+			await collins.getDictionaryContent();
+
+			const definitions: Definition[] = await collins.searchDefinitions();
+
+			assert(definitions.length === 5);
+		});
+	});
+
+	describe('searchExamples', ()=>{
+		it('Once it is called and cheerio instance is not loaded, throw an exception', async ()=>{
+			try {
+				const collins: Dictionary = new Collins('hello');
+				await collins.searchExamples();
+				assert.fail('EXCEPTION_NOT_FOUND');
+			} catch (error) {
+				assert(error instanceof UninitializedError);
+			}
+		});
+
+		it('Once it is called it must return an array of instances of GrammarClass', async ()=>{
+			const collins: Dictionary = new Collins('hello');
+			await collins.getDictionaryContent();
+
+			const examples: Example[] = await collins.searchExamples();
+
+			assert(examples.length === 9);
+		});
+	});
 });

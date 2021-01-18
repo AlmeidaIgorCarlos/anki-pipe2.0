@@ -1,31 +1,27 @@
-import {Definition} from './definition';
-import {Example} from './example';
-import {GrammarClass} from './grammar-class';
-import {Sentence} from './sentence';
-import {Pronunciation} from './pronunciation';
+import {Element} from './element';
 
-export class Card{
-    private readonly _pronunciation: Pronunciation;
-    private readonly _sentence: Sentence
-    private readonly _definitions: Definition[];
-    private readonly _examples: Example[];
-    private readonly _grammarClasses: GrammarClass[];
+export class Card implements Element {
+	
+	_parent: Element | undefined
+	_children: Element[] | undefined
+	
+	setParent(parent: Element): void {
+		this._parent = parent;
+	}
 
-    constructor(
-    	pronunciation: Pronunciation,
-    	sentence: Sentence,
-    	definitions: Definition[],
-    	examples: Example[],
-    	grammarClasses: GrammarClass[],
-    ){
-    	this._pronunciation = pronunciation;
-    	this._sentence = sentence;
-    	this._definitions = definitions;
-    	this._examples = examples;
-    	this._grammarClasses = grammarClasses;
-    }
+	getParent(): Element {
+		if(this._parent instanceof Element)
+			return this._parent;
+		else throw new Error('NO_PARENT_DEFINED');
+	}
+	
+	getChilldren(): Element[] {
+		if(this._children instanceof Element)
+			return this._children;
+		else throw new Error('NO_CHILDREN_DEFINED');
+	}
 
-    save(){
+	save(){
     	throw new Error('NOT_IMPLEMENTED');
-    }
+	}
 }
