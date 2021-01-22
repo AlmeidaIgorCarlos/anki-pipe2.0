@@ -1,6 +1,6 @@
-/*import axios from 'axios';
+import axios from 'axios';
 import assert from 'assert';
-import sinon, { createSandbox } from 'sinon';
+import sinon from 'sinon';
 import { AnkiConnect, AnkiConnectionError } from '../../src/services/anki-connect';
 import { NoteBuilder } from '../../src/builders/note-builder';
 import { use, expect }  from 'chai';
@@ -39,17 +39,14 @@ describe('anki-connect.ts', () => {
     
 	describe('addNote', () => {
 		it('Should call axios post with correct values', async () => {
-			sinon.stub(axios, 'post').resolves({
-				status: 200,
-				data: {
-					result: 1496198395707,
-					error: null
-				}
-			});
-			const spy = axios.post as any;
-			const ankiConnect = new AnkiConnect(80);
+			const axiosInstance = axios.create();
+			const ankiConnect = new AnkiConnect(axiosInstance);
+			const spy = sinon.stub(axiosInstance, 'post').returns(Promise.resolve({
+				'result': [1496198395707, null],
+				'error': null
+			}));
 			await ankiConnect.addNote(note.build());
-			assert(spy.calledWith('http://127.0.0.1:80', {
+			assert(spy.calledWith('http://127.0.0.1:8765', {
 				action: 'addNote',
 				version: 6,
 				params: {
@@ -63,32 +60,32 @@ describe('anki-connect.ts', () => {
 			}));
 		});
 		it('Should throw AnkiConnectionError if axios post method return undefined', async () => {
-			const sandbox = createSandbox();
-			sandbox.stub(axios, 'post').returns(Promise.resolve(undefined));
-			const stub = axios.post as any;
-			stub.returns(Promise.resolve(undefined));
-			const ankiConnect = new AnkiConnect(80);
+			const axiosInstance = axios.create();
+			const ankiConnect = new AnkiConnect(axiosInstance);
+			sinon.stub(axiosInstance, 'post').returns(Promise.resolve(undefined));
 			const promise = ankiConnect.addNote(note.build());
-			expect(promise).to.be.rejectedWith(new AnkiConnectionError());
+			await expect(promise).to.eventually.be.rejected
+				.and.be.an.instanceOf(AnkiConnectionError);
 		});
-		/*it('Should throw if axios throws', async () => {
-			const error = new Error();
-			sinon.stub(axios, 'post').rejects(error);
-			const ankiConnect = new AnkiConnect(80);
+		it('Should throw if axios throws', async () => {
+			const axiosInstance = axios.create();
+			const ankiConnect = new AnkiConnect(axiosInstance);
+			sinon.stub(axiosInstance, 'post').returns(Promise.reject(new Error()));
 			const promise = ankiConnect.addNote(note.build());
-			await expect(promise).to.be.rejectedWith(error);
-		});*/
-/*it('Should return success if success', async () => {
-			sinon.stub(axios, 'post').resolves({
+			await expect(promise).to.be.rejected;
+		});
+		it('Should return Axios data if success', async () => {
+			const axiosInstance = axios.create();
+			const ankiConnect = new AnkiConnect(axiosInstance);
+			sinon.stub(axiosInstance, 'post').resolves({
 				status: 200,
 				data: {
 					result: 1496198395707,
 					error: null
 				}
 			});
-			const ankiConnect = new AnkiConnect(80);
 			const response = await ankiConnect.addNote(note.build());
 			expect(response).to.deep.equal({ result: 1496198395707, error: null });
 		});
 	});
-});*/
+});

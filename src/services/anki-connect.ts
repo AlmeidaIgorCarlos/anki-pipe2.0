@@ -7,14 +7,12 @@ export class AnkiConnectionError extends Error {
 	}
 }
 
-
-
 export class AnkiConnect {
 
 	constructor(private readonly axios: AxiosInstance) {}
 
 	async addNote(note: any): Promise<any> {
-		const response = await axios.post(`http://127.0.0.1:${this.port}`, {
+		const response = await this.axios.post('http://127.0.0.1:8765', {
 			action: 'addNote',
 			version: 6,
 			params: {
