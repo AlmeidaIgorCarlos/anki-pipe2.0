@@ -1,22 +1,15 @@
 import {Element} from './element';
 
-export class Pronunciation implements Element{
+export class Pronunciation extends Element{
     private readonly _pronunciation: string;
     private readonly _sound: Buffer;
+    private readonly _soundUrl: string
     
-    constructor(pronunciation: string, sound: Buffer){
+    constructor(pronunciation: string, sound: Buffer, soundUrl: string){
+    	super();
     	this._pronunciation = pronunciation;
     	this._sound = sound;
-    }
-    
-    setParent(parent: Element): void {
-    	throw new Error('Method not implemented.');
-    }
-    getParent(): Element {
-    	throw new Error('Method not implemented.');
-    }
-    getChilldren(): Element[] {
-    	throw new Error('Method not implemented.');
+    	this._soundUrl = soundUrl;
     }
 
     get pronunciation(){
@@ -25,5 +18,9 @@ export class Pronunciation implements Element{
 
     get sound(){
     	return this._sound;
+    }
+
+    get soundUrl(){
+    	return this._soundUrl;
     }
 }

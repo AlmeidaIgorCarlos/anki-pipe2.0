@@ -61,7 +61,7 @@ export class Collins implements Dictionary{
     		});
     	});
 		
-    	return new Pronunciation(pronunciationText, soundBuffer);
+    	return new Pronunciation(pronunciationText, soundBuffer, pronunciationDownloadUrl);
     }
 	
     public searchDefinitions(): Promise<Definition[]> {
@@ -100,14 +100,14 @@ export class Collins implements Dictionary{
 			
     		if(exampleNodes[i].children[0].data){
     			exampleText = exampleNodes[i].children[0].data;
-    			examples.push(new Example(exampleText, Buffer.from('')));
+    			examples.push(new Example(exampleText, Buffer.from(''), ''));
     		}
     		else{
     			exampleText = exampleNodes[i].children[0].children[0].data;
 				
-    		const exampleUrl = exampleNodes[i].children[1].children[1].attribs['data-src-mp3'];
+    		const exampleSoundUrl = exampleNodes[i].children[1].children[1].attribs['data-src-mp3'];
     		const soundBuffer: Buffer = await new Promise((resolve)=>{
-    			https.get(exampleUrl, res => {
+    			https.get(exampleSoundUrl, res => {
     				const soundBuffers: Buffer[] = [];
 					
     				res.on('data', chunk => {
@@ -120,7 +120,7 @@ export class Collins implements Dictionary{
     			});
     		});
 			
-    			examples.push(new Example(exampleText, soundBuffer));
+    			examples.push(new Example(exampleText, soundBuffer, exampleSoundUrl));
     		}
 			
     	}

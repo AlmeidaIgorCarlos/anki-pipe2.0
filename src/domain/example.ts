@@ -1,23 +1,27 @@
 import {Element} from './element';
 
-export class Example implements Element{
+export class Example extends Element{
 
-    private _example: string
-    private _sound: Buffer
+    private readonly _example: string
+    private readonly _sound: Buffer
+    private readonly _soundUrl: string
 
-    constructor(example: string, sound: Buffer){
+    constructor(example: string, sound: Buffer, soundUrl: string){
+    	super();
     	this._example = example;
     	this._sound = sound;
-    }
-    
-    setParent(parent: Element): void {
-    	throw new Error('Method not implemented.');
-    }
-    getParent(): Element {
-    	throw new Error('Method not implemented.');
-    }
-    getChilldren(): Element[] {
-    	throw new Error('Method not implemented.');
+    	this._soundUrl = soundUrl;
     }
 
+    get example(): string{
+    	return this._example;
+    }
+
+    get sound():Buffer{
+    	return this._sound;
+    }
+
+    get soundUrl(): string{
+    	return this._soundUrl;
+    }
 }
