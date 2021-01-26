@@ -33,12 +33,16 @@ export class NoteBuilder {
 
     build(): any {
     	return {
+    		action: 'addNote',
+    		version: 6,
+    		params:{
     		note:{
     			...this._addNote,
     			fields: this._fields,
     			tags: this._tags,
     			audio: this._audio,
     			options: this._options
+    			}
     		}
     	};
     }

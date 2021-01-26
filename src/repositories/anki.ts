@@ -10,7 +10,7 @@ import { Pronunciation } from '../domain/pronunciation';
 
 class Anki implements Repository{
 
-	async save(card: Card): Promise<boolean> {
+	async save(card: Card): Promise<any> {
 		const noteBuilder = new NoteBuilder();
 
 		noteBuilder.addNote({
@@ -33,27 +33,35 @@ class Anki implements Repository{
 		noteBuilder.options({
 			allowDuplicate: true,
 		});
-		
-		const response: boolean = await new Promise((resolve, reject) => {
+
+		const response: any = await new Promise((resolve, reject) => {
+			let result = '';
+
 			const request = http.request({
-				hostname: 'http://127.0.0.1:8765',
+				host: 'localhost',
 				method: 'POST',
-				port: '8765',
+				port: 8765,
 				headers: {
-					'Content-Type': 'application/json',
-					'Cache-Control': 'no-cache'
+					'Content-Type': 'application/json'
 				}
 			}, res=>{
-				if(res.statusCode === 200 || res.statusCode === 201)
-					resolve(true);
+				if(res.statusCode === 200 || res.statusCode === 201){
+					res.on('data', chunk => {
+						result+=chunk;
+					});
+
+					res.on('end', ()=>{
+						console.log(result);
+						resolve(result);
+					});
+				}
 				else reject(false);
 			});
+
+			const params = JSON.stringify(noteBuilder.build());
 	
-			request.write({
-				action: 'addNote',
-				version: 6,
-				params: noteBuilder.build()
-			});
+			request.write(params);
+			request.end();
 		});
 
 		if(!response)

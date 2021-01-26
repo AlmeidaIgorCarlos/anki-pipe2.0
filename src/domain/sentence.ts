@@ -33,23 +33,22 @@ export class Sentence extends Element{
      */
     public async searchForWord(): Promise<Card>{
     	const card = new Card('english');
-        
+		
     	await this._dictionary.getDictionaryContent();
         
     	const examples = await this._dictionary.searchExamples();
     	const definitions = await this._dictionary.searchDefinitions();
     	const grammarClasses = await this._dictionary.searchGrammarClasses();
     	const pronunciation = await this._dictionary.searchPronunciation();
-        
-    	pronunciation.parent = card;
-    	grammarClasses[0].parent = card;
-    	examples[0].parent = grammarClasses[0];
-    	definitions[0].parent = grammarClasses[0];
-    	// grammarClasses.forEach((gC, index) => {
-    	// 	gC.parent=card;
-    	// 	examples[index].parent = gC;
-    	// 	definitions[index].parent = gC;
-    	// });
+		
+    	card.pushChild(this);
+    	card.pushChild(pronunciation);
+		
+    	grammarClasses.forEach((gC, index) => {
+    		card.pushChild(gC);
+    		gC.pushChild(examples[index]);
+    		gC.pushChild(definitions[index]);
+    	});
         
     	return card;
     }
