@@ -33,11 +33,13 @@ export class NoteBuilder {
 
     build(): any {
     	return {
-    		...this._addNote,
-    		fields: this._fields,
-    		tags: this._tags,
-    		audio: this._audio,
-    		options: this._options
+    		note:{
+    			...this._addNote,
+    			fields: this._fields,
+    			tags: this._tags,
+    			audio: this._audio,
+    			options: this._options
+    		}
     	};
     }
 

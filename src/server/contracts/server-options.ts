@@ -1,4 +1,5 @@
 import { ServerError } from './server-error';
+import { ServerPush } from './server-push';
 import { TemplateEngine } from './template-engine';
 
 export type ServerOptions = {
@@ -7,4 +8,5 @@ export type ServerOptions = {
 	genericServerError: ServerError,
 	notFoundServerError: ServerError,
 	templateEngine?: TemplateEngine;
+	serverPushers?: ServerPush[];
 }

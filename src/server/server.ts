@@ -8,6 +8,7 @@ import { ServerOptions } from './contracts/server-options';
 import { ServerError } from './contracts/server-error';
 import { TemplateEngine } from './contracts/template-engine';
 import { BaseController } from './controllers/base-controller';
+import { ServerPush } from './contracts/server-push';
 
 export class Server {
 	private readonly http2: Http2SecureServer;
@@ -15,6 +16,7 @@ export class Server {
 	private readonly genericServerError: ServerError;
 	private readonly notFoundServerError: ServerError;
 	public readonly templateEngine: TemplateEngine | undefined;
+	private readonly serverPushers: ServerPush[] | undefined;
 
 	constructor(
 		options: ServerOptions,
@@ -25,6 +27,7 @@ export class Server {
 		this.genericServerError = options.genericServerError;
 		this.notFoundServerError = options.notFoundServerError;
 		this.templateEngine = options.templateEngine;
+		this.serverPushers = options.serverPushers;
 	}
 
 	public listen (port: number): Http2SecureServer {
@@ -50,12 +53,26 @@ export class Server {
 		const { query, pathname } = url.parse(headers[':path'], true);
 	
 		assert(pathname);
+
+
+		const body = await new Promise((resolve) => {
+			let result = '';
+
+			stream.on('data', chunk=>{
+				result+=chunk;
+			});
+
+			stream.on('end', ()=>{
+				resolve(JSON.parse(result));
+			});
+
+		});
 	
 		const route: Route = this.findRoute(new Route(method, pathname, new BaseController()));
 
 		const httpRequest = {
 			headers: headers,
-			body: headers['body'],
+			body,
 			params: route.params(pathname),
 			query: query
 		};
@@ -64,12 +81,16 @@ export class Server {
 
 		if (this.templateEngine) {
 			httpResponse.body = await this.templateEngine.render(httpResponse.body, httpResponse.data);
+			if(this.serverPushers){
+				// this.serverPushers.forEach(pusher => pusher.pushAssets(stream, httpResponse.body));
+			}
 		}
 	
 		stream.respond({
 			'content-type': 'text/html; charset=utf-8',
 			':status': httpResponse.statusCode
 		});
+
 		stream.end(httpResponse.body);
 	}
 
@@ -82,6 +103,7 @@ export class Server {
 			} else {
 				this.genericServerError.handle(stream, err);
 			}
+			console.log(err);
 		}
 	}
 }

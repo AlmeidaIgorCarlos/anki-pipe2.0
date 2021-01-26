@@ -27,7 +27,7 @@
   },
   "scripts": {
     "start-dev": "ts-node src/index.ts",
-    "dev": "nodemon --watch 'src/' --exec 'ts-node src/index.ts' -e ts",
+    "dev": "nodemon --watch 'src/' --exec ts-node src/index.ts -e ts",
     "test": "mocha --recursive './test/**/*.ts' --require ts-node/register --exit --timeout 0",
     "coverage": "nyc npm run test"
   },

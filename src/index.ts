@@ -9,6 +9,9 @@ import {container} from './config/container/container';
 import { TYPES } from './config/container/types';
 import { ServerError } from './server/contracts/server-error';
 import { makeEjsTemplateEngine } from './server/factories/ejs-template-engine-factory';
+import { ScriptPusher } from './server/server-push/script-pusher';
+import { StylePusher } from './server/server-push/style-pusher';
+import { SearchController } from './server/controllers/search-controller';
 
 const server = new http.Server(
 	{
@@ -16,12 +19,18 @@ const server = new http.Server(
 		cert: fs.readFileSync(config.sslCert),
 		genericServerError: container.get<ServerError>(TYPES.GenericServerError),
 		notFoundServerError: container.get<ServerError>(TYPES.NotFoundServerError),
-		templateEngine: makeEjsTemplateEngine()
+		templateEngine: makeEjsTemplateEngine(),
+		serverPushers: [new ScriptPusher(), new StylePusher()]
 	}, [
 		new Route(
 			Methods.GET,
-			'/home/:id',
+			'/',
 			new HomeController()
+		),
+		new Route(
+			Methods.POST,
+			'/search',
+			new SearchController()
 		)
 	]);
 

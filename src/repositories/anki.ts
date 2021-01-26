@@ -4,14 +4,35 @@ import {AnkiConnectionError} from './errors/anki-connection-error';
 import { Card } from '../domain/card';
 import Repository from '../domain/repository';
 import {NoteBuilder} from '../builders/note-builder';
+import { Sentence } from '../domain/sentence';
+import { GrammarClass } from '../domain/grammar-class';
+import { Pronunciation } from '../domain/pronunciation';
 
 class Anki implements Repository{
 
-	private readonly noteBuilder = new NoteBuilder();
-
 	async save(card: Card): Promise<boolean> {
-		//TODO -> user card on note
-		const note = this.noteBuilder.build();
+		const noteBuilder = new NoteBuilder();
+
+		noteBuilder.addNote({
+			deckName: card.deck,
+			modelName: 'Basic'
+		});
+
+		const sentence: Sentence = card.children.filter(child => child instanceof Sentence)[0] as unknown as Sentence;
+		
+		const pronunciation: Pronunciation = card.children.filter(child => child instanceof Pronunciation)[0] as unknown as Pronunciation;
+		
+		const grammarClassesElements = card.children.filter(child => child instanceof GrammarClass);
+		const grammarClasses = grammarClassesElements.map(gC => gC as unknown as GrammarClass);
+
+		noteBuilder.fields({
+			Front: sentence.sentence,
+			Back: grammarClasses[0]._grammarClass
+		});
+
+		noteBuilder.options({
+			allowDuplicate: true,
+		});
 		
 		const response: boolean = await new Promise((resolve, reject) => {
 			const request = http.request({
@@ -31,9 +52,7 @@ class Anki implements Repository{
 			request.write({
 				action: 'addNote',
 				version: 6,
-				params: {
-					note
-				}
+				params: noteBuilder.build()
 			});
 		});
 

@@ -1,4 +1,5 @@
 import {Element} from './element';
+import Repository from './repository';
 
 export class Card extends Element {
 	
@@ -9,7 +10,11 @@ export class Card extends Element {
 		this._deck = deck;
 	}
 
-	save(){
-    	throw new Error('NOT_IMPLEMENTED');
+	get deck(): string{
+		return this._deck;
 	}
+
+	save(repository: Repository){
+		repository.save(this);
+	}	
 }

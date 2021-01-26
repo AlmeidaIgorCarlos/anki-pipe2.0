@@ -1,30 +1,23 @@
 import { Card } from './card';
 import { Dictionary } from './dictionary';
-import Repository from './repository';
+import {Element} from './element';
 
-export class Sentence {
+export class Sentence extends Element{
     private readonly _sentence: string;
-    private readonly _word: string;
     private readonly _dictionary: Dictionary
-    private readonly _repository: Repository
     
     /**
      * Constructor of the Sentence class
      * @param {string} sentence The main sentence of the card
-     * @param {string} word The desired word that the user wants to search the meaning
      * @param {object} dictionary Instance of an implementation of the Dictionary interface
-     * @param {object} repository Instance of an implementation of the repository instance
      */
     public constructor(
     	sentence: string,
-    	word: string,
     	dictionary: Dictionary,
-    	repository: Repository
     ){
+    	super();
     	this._sentence = sentence;
-    	this._word = word;
     	this._dictionary = dictionary;
-    	this._repository = repository;
     }
 
     /**
@@ -38,8 +31,26 @@ export class Sentence {
      * @function searchForWord
      * Method responsible for searching the word on the implemented dictionary
      */
-    public searchForWord(): Card{
-    	throw new Error('NOT_IMPLEMENTED');
+    public async searchForWord(): Promise<Card>{
+    	const card = new Card('english');
+        
+    	await this._dictionary.getDictionaryContent();
+        
+    	const examples = await this._dictionary.searchExamples();
+    	const definitions = await this._dictionary.searchDefinitions();
+    	const grammarClasses = await this._dictionary.searchGrammarClasses();
+    	const pronunciation = await this._dictionary.searchPronunciation();
+        
+    	pronunciation.parent = card;
+    	grammarClasses[0].parent = card;
+    	examples[0].parent = grammarClasses[0];
+    	definitions[0].parent = grammarClasses[0];
+    	// grammarClasses.forEach((gC, index) => {
+    	// 	gC.parent=card;
+    	// 	examples[index].parent = gC;
+    	// 	definitions[index].parent = gC;
+    	// });
+        
+    	return card;
     }
-
 }
