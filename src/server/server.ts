@@ -54,7 +54,6 @@ export class Server {
 	
 		assert(pathname);
 
-
 		const body = await new Promise((resolve) => {
 			let result = '';
 
@@ -63,7 +62,8 @@ export class Server {
 			});
 
 			stream.on('end', ()=>{
-				resolve(JSON.parse(result));
+				const data = result ? JSON.parse(result) : null;
+				resolve(data);
 			});
 
 		});
