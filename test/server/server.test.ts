@@ -15,6 +15,23 @@ import { GenericServerError } from '../../src/server/server-errors/generic-serve
 import { NotFoundServerError } from '../../src/server/server-errors/not-found-server-error';
 import { ServerOptions } from '../../src/server/contracts/server-options';
 
+const mockHttp2Stream = (): any => ({
+	respond: () => {
+		console.log('respond being executed');
+	},
+	end: () => {
+		console.log('respond being executed');
+	},
+	on: (event: string, callback: any) => {
+		const result = event === 'data' 
+			? JSON.stringify({
+				msg: 'Hello World!'
+			}) : null;
+
+		return callback(result);
+	}
+});
+
 describe('server.ts', () => {
 	const key = readFileSync('src/server/ssl/localhost-privkey.pem');
 	const cert = readFileSync('src/server/ssl/localhost-cert.pem');
@@ -124,9 +141,7 @@ describe('server.ts', () => {
 			const spyFunction = spy();
 
 			const stream = {
-				respond(){
-					console.log('respond being executed');
-				},
+				...mockHttp2Stream(),
 				end: spyFunction
 			};
 
@@ -159,13 +174,11 @@ describe('server.ts', () => {
 			const spyFunction = sinon.spy();
 
 			const stream = {
-				respond: spyFunction,
-				end(){
-					console.log('end function is being called');
-				}
+				...mockHttp2Stream(),
+				respond: spyFunction
 			};
 
-			server.onConnect(stream as unknown as ServerHttp2Stream, {
+			await server.onConnect(stream as unknown as ServerHttp2Stream, {
 				':method': 'GET',
 				':path': '/'
 			});
@@ -199,14 +212,7 @@ describe('server.ts', () => {
 				render: spy()
 			};
 
-			const stream = {
-				respond(){
-					console.log('respond function is being called');
-				},
-				end(){
-					console.log('end function is being called');
-				}
-			};
+			const stream = mockHttp2Stream();
 
 			const server = new Server(options, [
 				new Route(
@@ -249,9 +255,7 @@ describe('server.ts', () => {
 			};
 
 			const stream = {
-				respond(){
-					console.log('respond function is being called');
-				},
+				...mockHttp2Stream(),
 				end: spy()
 			};
 
