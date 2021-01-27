@@ -11,12 +11,7 @@ import { Pronunciation } from '../domain/pronunciation';
 class Anki implements Repository{
 
 	async save(card: Card): Promise<any> {
-		const noteBuilder = new NoteBuilder();
-
-		noteBuilder.addNote({
-			deckName: card.deck,
-			modelName: 'Basic'
-		});
+		
 
 		const sentence: Sentence = card.children.filter(child => child instanceof Sentence)[0] as unknown as Sentence;
 		
@@ -25,26 +20,39 @@ class Anki implements Repository{
 		const grammarClassesElements = card.children.filter(child => child instanceof GrammarClass);
 		const grammarClasses = grammarClassesElements.map(gC => gC as unknown as GrammarClass);
 
-		noteBuilder.fields({
-			Front: sentence.sentence,
-			Back: grammarClasses[0]._grammarClass
-		});
+		const noteBuilder = new NoteBuilder();
 
-		noteBuilder.options({
-			allowDuplicate: true,
-		});
+		noteBuilder.addNote({
+			deckName: card.deck,
+			modelName: 'Básico'
+		}).fields({
+			Frente: sentence.sentence,
+			Verso: grammarClasses[0]._grammarClass
+		}).options({
+			allowDuplicate: false,
+			duplicateScope: 'test',
+			duplicateScopeOptions: {
+				deckName: 'Básico',
+				checkChildren: false
+			}
+		}).tags([
+			'test'
+		]);
 
 		const response: any = await new Promise((resolve, reject) => {
 			let result = '';
+			const params = JSON.stringify(noteBuilder.build());
 
 			const request = http.request({
 				host: 'localhost',
 				method: 'POST',
 				port: 8765,
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/x-www-form-urlencoded',
+					'Content-Length': Buffer.byteLength(params)
 				}
 			}, res=>{
+				res.setEncoding('utf8');
 				if(res.statusCode === 200 || res.statusCode === 201){
 					res.on('data', chunk => {
 						result+=chunk;
@@ -56,10 +64,8 @@ class Anki implements Repository{
 					});
 				}
 				else reject(false);
-			});
-
-			const params = JSON.stringify(noteBuilder.build());
-	
+			});	
+			
 			request.write(params);
 			request.end();
 		});
