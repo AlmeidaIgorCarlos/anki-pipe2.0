@@ -24,20 +24,13 @@ class Anki implements Repository{
 
 		noteBuilder.addNote({
 			deckName: card.deck,
-			modelName: 'Básico'
+			modelName: 'Basic'
 		}).fields({
-			Frente: sentence.sentence,
-			Verso: grammarClasses[0]._grammarClass
+			Front: sentence.sentence,
+			Back: grammarClasses[0]._grammarClass
 		}).options({
-			allowDuplicate: false,
-			duplicateScope: 'test',
-			duplicateScopeOptions: {
-				deckName: 'Básico',
-				checkChildren: false
-			}
-		}).tags([
-			'test'
-		]);
+			allowDuplicate: true,
+		});
 
 		const response: any = await new Promise((resolve, reject) => {
 			let result = '';
