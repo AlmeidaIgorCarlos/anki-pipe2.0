@@ -22,7 +22,10 @@ export class SearchController extends BaseController{
         
 		return {
 			statusCode: 200,
-			body: 'salvo'
+			body: JSON.stringify(card),
+			headers:{
+				'Content-Type': 'application/json'
+			}
 		};
 
 	}

@@ -22,7 +22,6 @@ function selectWord(wordElement){
 	// eslint-disable-next-line no-undef
 	const typedWordsElement = document.getElementById('typed-words');
 	Array.from(typedWordsElement.children).forEach(child => {
-		console.log(child);
 		child.setAttribute('class', 'lead word paragraph-weight paragraph-font-size');
 	});
     

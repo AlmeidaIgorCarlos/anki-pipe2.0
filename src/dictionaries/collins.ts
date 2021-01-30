@@ -12,10 +12,12 @@ export class Collins implements Dictionary{
 
     private readonly dictionaryUrl: string = 'https://www.collinsdictionary.com/pt/dictionary/english'
     private readonly _word: string;
+    private readonly _getSound: boolean;
     private $: any;
 
-    constructor(word: string){
+    constructor(word: string, getSound = false){
     	this._word = word;
+    	this._getSound = getSound;
     }
 
     public getDictionaryContent(): Promise<string>{
@@ -47,7 +49,7 @@ export class Collins implements Dictionary{
 
     	const pronunciationDownloadUrl: string = this.$('.sound').attr('data-src-mp3');
 
-    	const soundBuffer: Buffer = await new Promise((resolve)=>{
+    	const soundBuffer: Buffer = this._getSound ? await new Promise((resolve)=>{
     		https.get(pronunciationDownloadUrl, res => {
     			const soundBuffers: Buffer[] = [];
 				
@@ -59,7 +61,7 @@ export class Collins implements Dictionary{
     				resolve(Buffer.concat(soundBuffers));
     			});
     		});
-    	});
+    	}) : Buffer.from('');
 		
     	return new Pronunciation(pronunciationText, soundBuffer, pronunciationDownloadUrl);
     }
@@ -104,9 +106,15 @@ export class Collins implements Dictionary{
     		}
     		else{
     			exampleText = exampleNodes[i].children[0].children[0].data;
+			
+    			let exampleSoundUrl: any;
+    			try {
+    				exampleSoundUrl = exampleNodes[i].children[1].children[1].attribs['data-src-mp3'];
+    			} catch (error) {
+    				exampleSoundUrl = exampleNodes[i].children[3].children[1].attribs['data-src-mp3'];
+    			}
 				
-    		const exampleSoundUrl = exampleNodes[i].children[1].children[1].attribs['data-src-mp3'];
-    		const soundBuffer: Buffer = await new Promise((resolve)=>{
+    		const soundBuffer: Buffer = this._getSound ? await new Promise((resolve)=>{
     			https.get(exampleSoundUrl, res => {
     				const soundBuffers: Buffer[] = [];
 					
@@ -118,7 +126,7 @@ export class Collins implements Dictionary{
     					resolve(Buffer.concat(soundBuffers));
     				});
     			});
-    		});
+    		}) : Buffer.from('');
 			
     			examples.push(new Example(exampleText, soundBuffer, exampleSoundUrl));
     		}

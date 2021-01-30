@@ -87,8 +87,9 @@ export class Server {
 		}
 	
 		stream.respond({
-			'content-type': 'text/html; charset=utf-8',
-			':status': httpResponse.statusCode
+			'Content-Type': 'text/html; charset=utf-8',
+			':status': httpResponse.statusCode,
+			...httpResponse.headers,
 		});
 
 		stream.end(httpResponse.body);
@@ -103,7 +104,6 @@ export class Server {
 			} else {
 				this.genericServerError.handle(stream, err);
 			}
-			console.log(err);
 		}
 	}
 }
