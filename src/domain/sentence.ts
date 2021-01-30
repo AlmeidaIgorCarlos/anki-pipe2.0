@@ -4,7 +4,7 @@ import {Element} from './element';
 
 export class Sentence extends Element{
     private readonly _sentence: string;
-    private readonly _dictionary: Dictionary
+    private readonly _dictionary: Dictionary;
     
     /**
      * Constructor of the Sentence class
@@ -32,7 +32,7 @@ export class Sentence extends Element{
      * Method responsible for searching the word on the implemented dictionary
      */
     public async searchForWord(): Promise<Card>{
-    	const card = new Card('english');
+    	const card = new Card();
 		
     	await this._dictionary.getDictionaryContent();
         

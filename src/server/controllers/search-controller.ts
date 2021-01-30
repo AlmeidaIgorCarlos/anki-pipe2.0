@@ -1,5 +1,6 @@
 import { Collins } from '../../dictionaries/collins';
 import { Card } from '../../domain/card';
+import { DefaultAnkiCardTheme } from '../../domain/default-anki-card-theme';
 import { Dictionary } from '../../domain/dictionary';
 import Repository from '../../domain/repository';
 import { Sentence } from '../../domain/sentence';
@@ -15,7 +16,7 @@ export class SearchController extends BaseController{
 		const collins: Dictionary = new Collins(word);
 		const sentenceEntity = new Sentence(sentence, collins);
         
-		const anki: Repository = new Anki();
+		const anki: Repository = new Anki('english', new DefaultAnkiCardTheme());
         
 		const card: Card = await sentenceEntity.searchForWord();
 		await card.save(anki);
