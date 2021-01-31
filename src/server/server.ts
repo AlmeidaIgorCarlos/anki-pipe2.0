@@ -82,7 +82,7 @@ export class Server {
 		if (this.templateEngine) {
 			httpResponse.body = await this.templateEngine.render(httpResponse.body, httpResponse.data);
 			if(this.serverPushers){
-				// this.serverPushers.forEach(pusher => pusher.pushAssets(stream, httpResponse.body));
+				this.serverPushers.forEach(pusher => pusher.pushAssets(stream, httpResponse.body));
 			}
 		}
 	

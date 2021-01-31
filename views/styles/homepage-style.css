@@ -1,49 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;400&display=swap');
+
+body{
+    margin: 0px;
+    padding: 0px;
+}
+
 .header-background{
     min-height: 150px;
     min-width: 100%;
     background-color: #007bff;
-    position: absolute;
-    top: 0;
-    z-index: -1;
+    margin-top: 0;
+    box-shadow: 0px 5px 10px #C4C4C4;
 }
 
-.header-bottom-background{
-    min-height: 3px;
-    min-width: 100%;
-    background-color: #C4C4C4;
+.header-background > h1{
     position: absolute;
-    top: 150px;
-    z-index: -1;
+    top: -50px;
+    left: 20px;
+    font-size: 96px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
 }
 
-.paragraph-weight{
+#subtitle{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
+    font-size: 50px;
+    margin-top: 15px;
+    margin-left: 20px;
+}
+
+#search-content{
+    position: relative;
+    margin-top: 100px;
+}
+
+#search-content > textarea{
+    min-height: 300px;
+    min-width: 95%;
+    margin-left: 10px;
+    font-size: 34px;
+    font-family: 'Roboto', sans-serif;
     font-weight: 400;
+    color: black;
+    border: none;
+    outline: none;
+    background-color: #c9c9c969;
+    padding-left: 20px;
+    padding-top: 50px;
+    border-bottom: 10px solid #007bff;
+    border-radius: 10px;
 }
 
-.paragraph-font-size{
-    font-size: 2.5em;
+#sentence-label{
+    position: absolute;
+    font-family: 'Roboto', sans-serif;
+    font-size: 26px;
+    color: #007bff;
+    font-weight: 400;
+    top: 15px;
+    left: 25px;
 }
 
-.top-margin{
-    margin-top: 25px;
+#search-content > h3 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
+    margin-left: 20px;
+    margin-right: 20px;
+    font-size: 50px;
+    color: black;
+    position: relative;
+    top: 30px;
+}
+
+#typed-words{
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 10px auto 10px auto;
+    border-radius: 10px;
+    background-color: #c9c9c969;
+    padding-bottom: 30px;
+    border-bottom: 10px solid #007bff;
+
 }
 
 .word{
-    font-size: 30px;
-    background-color: #dbdbdb;
-    
+    font-family: 'Roboto', sans-serif;
+    font-size: 50px;
+    background-color: #a8a8a8;
     padding: 10px 20px;
     margin: 30px 10px auto 10px;
-    
     border-radius: 15px;
     border: none;
+    font-weight: 400;
 }
 
 .selected{
     background-color: #007bff;
 }
 
-.button-hover{
+#search-content button{
+    font-weight: 400;
+    font-family: 'Roboto', sans-serif;
+    font-size: 60px;
+    color: white;
+    background-color: #007bff;
+    display: block;
+    margin-top: 50px;
+    padding-top: 5px;
+    padding-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 98%;
+    border: none;
+    border-radius: 10px;
+}
+
+.button-hover:hover{
     box-shadow: 5px 5px 10px #C4C4C4;
 }
 
@@ -53,20 +126,4 @@
 
 .field-height{
     min-height: 300px;
-}
-
-#typed-words{
-    padding: 10px auto 10px auto;
-    border-radius: 10px;
-    border: 1px solid #C4C4C4;
-    padding-bottom: 30px;
-}
-
-#search-content button{
-    font-size: 40px;
-    border-radius: 10px;
-    padding-bottom: 10px;
-    display: block;
-    margin: 50px auto auto;
-    width: 100%;
 }

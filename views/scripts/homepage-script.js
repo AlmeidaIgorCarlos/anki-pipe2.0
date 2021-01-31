@@ -1,4 +1,5 @@
 function analyzeSentence(sentence){
+	this.sentence = sentence;
 	this.selectedWord = undefined;
 	const words = sentence.split(' ').filter(word => word != '');
     
@@ -29,9 +30,22 @@ function selectWord(wordElement){
 	wordElement.setAttribute('class', 'lead word selected paragraph-weight paragraph-font-size white-font-color');
 }
 
-function searchWord(){
+async function searchWord(){
 	if(!this.selectedWord){
 		return;
 	}else{
+		// eslint-disable-next-line no-undef
+		let response = await fetch('https://localhost:3000/search', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				sentence: this.sentence,
+				word: this.selectedWord
+			})
+		});
+
+		response = await response.json();
 	}
 }

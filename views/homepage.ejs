@@ -6,28 +6,23 @@
 </head>
 
 <body>
-    <div class="header-background"></div>
-    <div class="header-bottom-background"></div>
-    <div class="container-fluid">
-        <section id="title-element">
-            <h1 class="display-1 top-margin white-font-color">AnkiPipe</h1>
-            <p class="lead paragraph-weight top-margin paragraph-font-size">Welcome to the software that will help you
-                how to learn english!
-            </p>
-        </section>
-        <section id="search-content" class="top-margin">
-            <textarea class="form-control paragraph-font-size field-height" placeholder="Type your sentence right here"
-                onkeyup="analyzeSentence(this.value)"></textarea>
-            <p class="lead paragraph-weight top-margin paragraph-font-size">Click on the word that you'd like to learn
-            </p>
-            <article id="typed-words" class="field-height">
-            </article>
-            <button type="button" class="btn btn-primary button-hover" onclick="searchWord()">search</button>
-        </section>
+    <section class="header-background">
+        <h1 class="display-1 top-margin white-font-color">AnkiPipe</h1>
+    </section>
+    <h2 id="subtitle">Welcome to the software that will help you
+        how to learn english!</h2>
+    <section id="search-content">
+        <span id="sentence-label">Sentence</span>
+        <textarea onkeyup="analyzeSentence(this.value)"></textarea>
+        <h3 class="lead paragraph-weight top-margin paragraph-font-size">Click on the word that you'd like to learn
+        </h3>
+        <article id="typed-words" class="field-height">
+        </article>
+        <button type="button" class="btn btn-primary button-hover" onclick="searchWord()">search</button>
+    </section>
 
-        <section id="result-content">
-        </section>
-    </div>
+    <section id="result-content">
+    </section>
 </body>
 
 </html>
