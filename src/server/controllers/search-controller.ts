@@ -16,7 +16,7 @@ export class SearchController extends BaseController{
 		const collins: Dictionary = new Collins(word);
 		const sentenceEntity = new Sentence(sentence, collins);
         
-		const anki: Repository = new Anki('english', new DefaultAnkiCardTheme());
+		const anki: Repository = new Anki('test', new DefaultAnkiCardTheme());
         
 		const card: Card = await sentenceEntity.searchForWord();
 		await card.save(anki);

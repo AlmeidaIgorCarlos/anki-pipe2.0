@@ -1,3 +1,15 @@
+// eslint-disable-next-line no-undef
+const dialogControl = new DialogControl();
+
+function showMissingWordMessage() {
+	dialogControl.setTitle('Warning');
+	dialogControl.setMessage('Please, select a word!');
+	dialogControl.setButton1('', () => {});
+	dialogControl.setButton2('Ok', () => dialogControl.hide());
+	dialogControl.setWidth(350);
+	dialogControl.show();
+}
+
 function analyzeSentence(sentence){
 	this.sentence = sentence;
 	this.selectedWord = undefined;
@@ -32,6 +44,7 @@ function selectWord(wordElement){
 
 async function searchWord(){
 	if(!this.selectedWord){
+		showMissingWordMessage();
 		return;
 	}else{
 		// eslint-disable-next-line no-undef
