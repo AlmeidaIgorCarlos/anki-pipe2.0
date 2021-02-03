@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;400&display=swap');
 
+html {
+    scroll-behavior: smooth;
+}
+
 body{
     margin: 0px;
     padding: 0px;
@@ -86,7 +90,7 @@ body{
 
 .word{
     font-family: 'Roboto', sans-serif;
-    font-size: 50px;
+    font-size: 40px;
     background-color: #a8a8a8;
     padding: 10px 20px;
     margin: 30px 10px auto 10px;
@@ -126,4 +130,55 @@ body{
 
 .field-height{
     min-height: 300px;
+}
+
+#result-element{
+    margin: 50px 15px;
+    background-color: #c9c9c969;
+    border-radius: 10px;
+    padding: 10px 30px;
+    border-bottom: 10px solid #007bff;
+}
+
+#result-element > h3{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 50px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#result-element > h4{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 50px;
+    margin: 20px 10px;
+    text-align: center;
+}
+
+.grammar-class-container:not(:first-of-type){
+    margin-top: 50px;
+}
+
+.grammar-class-container > h5{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 40px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.grammar-class-container > p{
+    font-family: 'Roboto', sans-serif;
+    font-size: 35px;
+}
+
+.definition{
+    font-weight: 300;
+}
+
+.example{
+    font-weight: 200;
+    position: relative;
+    top: -20px;
 }
