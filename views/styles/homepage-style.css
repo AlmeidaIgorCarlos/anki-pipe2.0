@@ -13,15 +13,15 @@ body{
     min-height: 150px;
     min-width: 100%;
     background-color: #007bff;
-    margin-top: 0;
+    margin: 0;
     box-shadow: 0px 5px 10px #C4C4C4;
 }
 
 .header-background > h1{
     position: absolute;
-    top: -50px;
+    top: 20px;
     left: 20px;
-    font-size: 96px;
+    font-size: 3.5em;
     font-family: 'Roboto', sans-serif;
     font-weight: 100;
 }
@@ -29,40 +29,42 @@ body{
 #subtitle{
     font-family: 'Roboto', sans-serif;
     font-weight: 100;
-    font-size: 50px;
+    font-size: 1.5em;
     margin-top: 15px;
     margin-left: 20px;
 }
 
 #search-content{
     position: relative;
-    margin-top: 100px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 #search-content > textarea{
-    min-height: 300px;
-    min-width: 95%;
-    margin-left: 10px;
-    font-size: 34px;
+    min-height: 200px;
+    width: 90%;
+    font-size: 1em;
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
     color: black;
     border: none;
     outline: none;
     background-color: #c9c9c969;
-    padding-left: 20px;
+    padding-left: 10px;
     padding-top: 50px;
     border-bottom: 10px solid #007bff;
     border-radius: 10px;
+    margin-left: 15px;
+    max-width: 800px;
 }
 
 #sentence-label{
     position: absolute;
     font-family: 'Roboto', sans-serif;
-    font-size: 26px;
+    font-size: 1em;
     color: #007bff;
     font-weight: 400;
-    top: 15px;
+    top: 120px;
     left: 25px;
 }
 
@@ -71,26 +73,29 @@ body{
     font-weight: 100;
     margin-left: 20px;
     margin-right: 20px;
-    font-size: 50px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 1.5em;
     color: black;
     position: relative;
-    top: 30px;
 }
 
 #typed-words{
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-top: 10px;
+    margin-left: 15px;
     padding: 10px auto 10px auto;
     border-radius: 10px;
     background-color: #c9c9c969;
     padding-bottom: 30px;
     border-bottom: 10px solid #007bff;
-
+    width: 90%;
+    max-width: 800px;
+    padding-left: 10px;
 }
 
 .word{
     font-family: 'Roboto', sans-serif;
-    font-size: 40px;
+    font-size: 1em;
     background-color: #a8a8a8;
     padding: 10px 20px;
     margin: 30px 10px auto 10px;
@@ -106,16 +111,16 @@ body{
 #search-content button{
     font-weight: 400;
     font-family: 'Roboto', sans-serif;
-    font-size: 60px;
+    font-size: 1.5em;
     color: white;
     background-color: #007bff;
     display: block;
     margin-top: 50px;
     padding-top: 5px;
     padding-bottom: 10px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 98%;
+    margin-left: 15px;
+    width: 93%;
+    max-width: 800px;
     border: none;
     border-radius: 10px;
 }
@@ -129,18 +134,22 @@ body{
 }
 
 .field-height{
-    min-height: 300px;
+    min-height: 200px;
 }
 
 #result-element{
-    margin: 50px 15px;
+    margin: 50px auto;
     background-color: #c9c9c969;
     border-radius: 10px;
     padding: 10px 30px;
+    padding-left: 15px;
     border-bottom: 10px solid #007bff;
+    width: 80%;
+    max-width: 730px;
 }
 
 #result-element > h3{
+    margin-top: 0px;
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
     font-size: 34px;
@@ -181,4 +190,61 @@ body{
     font-weight: 100;
     position: relative;
     top: 20px;
+}
+
+@media only screen and (min-width: 375px)
+{
+    #result-element{
+
+    }
+
+    #sentence-label{
+        top: 90px;
+    }
+
+    #search-content > textarea{
+        max-width: 800px;
+    }
+    
+    #typed-words{
+        max-width: 800px;
+    }
+}
+
+@media only screen and (min-width: 425px)
+{
+    #search-content > textarea{
+        width: 92%;
+    }
+    
+    #typed-words{
+        width: 92%;
+    }
+
+    #search-content button{
+        width: 94%;
+    }
+}
+
+@media only screen and (min-width: 650px)
+{
+    #sentence-label{
+        top: 70px;
+    }
+
+    #search-content > textarea{
+        width: 95%;
+    }
+    
+    #typed-words{
+        width: 95%;
+    }
+
+    #search-content button{
+        width: 96%;
+    }
+}
+
+@media only screen and (min-width: 1024px)
+{
 }
