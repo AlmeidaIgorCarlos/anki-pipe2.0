@@ -97,7 +97,7 @@ async function searchWord(){
 			examples.forEach(e => {
 				const grammarClassExampleElement = document.createElement('p');
 				grammarClassExampleElement.setAttribute('class', 'example');
-				grammarClassExampleElement.innerText = e._example;
+				grammarClassExampleElement.innerText = `- ${e._example}`;
 				fatherElementGrammarClassArticle.appendChild(grammarClassExampleElement);
 			});
 
