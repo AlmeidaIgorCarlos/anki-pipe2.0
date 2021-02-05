@@ -12,6 +12,7 @@ import { makeEjsTemplateEngine } from './server/factories/ejs-template-engine-fa
 import { ScriptPusher } from './server/server-push/script-pusher';
 import { StylePusher } from './server/server-push/style-pusher';
 import { SearchController } from './server/controllers/search-controller';
+import { DeckController } from './server/controllers/deck-controller';
 
 const server = new http.Server(
 	{
@@ -31,6 +32,11 @@ const server = new http.Server(
 			Methods.POST,
 			'/search',
 			new SearchController()
+		),
+		new Route(
+			Methods.GET,
+			'/decks',
+			new DeckController()
 		)
 	]);
 

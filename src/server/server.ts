@@ -99,6 +99,7 @@ export class Server {
 		try {
 			await this.onConnect(stream, headers);
 		} catch (err) {
+			console.log(err);
 			if (err instanceof NotFoundError) {
 				this.notFoundServerError.handle(stream, err);
 			} else {

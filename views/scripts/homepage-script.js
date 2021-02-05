@@ -1,3 +1,21 @@
+fetch('https://localhost:3000/decks', {
+	method: 'GET'
+}).then(response => {
+	response.json()
+		.then(content => {
+			this.decks = content.decks;
+
+			const deckList = document.getElementById('deck-list');
+			this.decks.forEach(deckName => {
+				const optionElement = document.createElement('option');
+				optionElement.setAttribute('value', deckName);
+				optionElement.setAttribute('class', 'deck-item');
+				optionElement.innerText = deckName;
+				deckList.appendChild(optionElement);
+			});
+		});
+});
+
 // eslint-disable-next-line no-undef
 const dialogControl = new DialogControl();
 
@@ -47,6 +65,8 @@ async function searchWord(){
 		showMissingWordMessage();
 		return;
 	}else{
+		const deckList = document.getElementById('deck-list');
+
 		// eslint-disable-next-line no-undef
 		let response = await fetch('https://localhost:3000/search', {
 			method: 'POST',
@@ -55,7 +75,8 @@ async function searchWord(){
 			},
 			body: JSON.stringify({
 				sentence: this.sentence,
-				word: this.selectedWord
+				word: this.selectedWord,
+				deckName: deckList.value
 			})
 		});
 

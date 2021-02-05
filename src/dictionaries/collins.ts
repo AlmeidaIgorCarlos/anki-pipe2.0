@@ -111,7 +111,7 @@ export class Collins implements Dictionary{
     			try {
     				exampleSoundUrl = exampleNodes[i].children[1].children[1].attribs['data-src-mp3'];
     			} catch (error) {
-    				exampleSoundUrl = exampleNodes[i].children[3].children[1].attribs['data-src-mp3'];
+    					exampleSoundUrl = exampleNodes[i].children[3].children[1].attribs['data-src-mp3'];
     			}
 				
     		const soundBuffer: Buffer = this._getSound ? await new Promise((resolve)=>{
