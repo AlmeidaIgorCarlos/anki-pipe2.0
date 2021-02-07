@@ -46,6 +46,10 @@ class Anki implements Repository{
 				}
 				else reject([]);
 			});	
+
+			request.on('error', ()=>{
+				reject();
+			});
 			
 			request.write(JSON.stringify({
 				'action': 'deckNames',
@@ -53,6 +57,7 @@ class Anki implements Repository{
 			}));
 
 			request.end();
+
 		});
 
 		if(!response)

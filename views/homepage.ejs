@@ -7,28 +7,28 @@
 
 <body>
     <%- include('partials/dialog/dialog'); %>
-    <section class="header-background">
-        <h1 class="display-1 top-margin white-font-color">AnkiPipe</h1>
-    </section>
-    <section id="search-content">
-        <h2 id="subtitle">Welcome to the software that will help you
-            how to learn english!</h2>
-        <span id="sentence-label">Sentence</span>
-        <textarea onkeyup="analyzeSentence(this.value)"></textarea>
-        <h3 class="lead paragraph-weight top-margin paragraph-font-size">Click on the word that you'd like to learn
-        </h3>
-        <article id="typed-words" class="field-height">
-        </article>
-        <section>
-            <h3>Select the wished deck:</h3>
-            <select id="deck-list"></select>
+        <section class="header-background">
+            <h1>AnkiPipe</h1>
         </section>
-        <button type="button" class="btn btn-primary button-hover" onclick="searchWord()">search</button>
-    </section>
+        <section id="search-content">
+            <h2 id="subtitle">Welcome to the software that will help you
+                how to learn english!</h2>
+            <span id="sentence-label">Sentence</span>
+            <textarea onkeyup="analyzeSentence(this.value)"></textarea>
+            <h3>Click on the word that you'd like to learn
+            </h3>
+            <article id="typed-words" class="field-height">
+            </article>
+            <section>
+                <h3>Select the wished deck:</h3>
+                <select id="deck-list"></select>
+            </section>
+            <button type="button" class="btn btn-primary button-hover" onclick="searchWord()">search</button>
+        </section>
 
-    <footer>
-        <%- include('partials/footer'); %>
-    </footer>
+        <footer>
+            <%- include('partials/footer'); %>
+        </footer>
 </body>
 
 </html>

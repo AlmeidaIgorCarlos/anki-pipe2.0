@@ -7,17 +7,30 @@ import { BaseController } from './base-controller';
 
 export class DeckController extends BaseController{
 	async handle(httpRequest: HttpRequest): Promise<HttpResponse>{
-		const anki: Repository = new Anki('', new DefaultAnkiCardTheme());
-		const decks: string[] = await anki.getAvailableDecks();
-        
-		return {
-			statusCode: 200,
-			body: JSON.stringify({
-				decks
-			}),
-			headers:{
-				'Content-Type': 'application/json'
-			}
-		} as HttpResponse;
+		try {
+			
+			const anki: Repository = new Anki('', new DefaultAnkiCardTheme());
+			const decks: string[] = await anki.getAvailableDecks();
+			
+			return {
+				statusCode: 200,
+				body: JSON.stringify({
+					decks
+				}),
+				headers:{
+					'Content-Type': 'application/json'
+				}
+			} as HttpResponse;
+		} catch (error) {
+			return {
+				statusCode: 500,
+				body: JSON.stringify({
+					message: 'It was not possible to list the available decks'
+				}),
+				headers:{
+					'Content-Type': 'application/json'
+				}
+			} as HttpResponse;
+		}
 	}
 }

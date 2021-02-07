@@ -109,7 +109,7 @@ export class Collins implements Dictionary{
 			
     			let exampleSoundUrl: any;
     			try {
-    				exampleSoundUrl = exampleNodes[i].children[1].children[1].attribs['data-src-mp3'];
+    				exampleSoundUrl = exampleNodes[i].children[1].children[0].attribs['data-src-mp3'];
     			} catch (error) {
     					exampleSoundUrl = exampleNodes[i].children[3].children[1].attribs['data-src-mp3'];
     			}

@@ -1,8 +1,14 @@
 fetch('https://localhost:3000/decks', {
 	method: 'GET'
 }).then(response => {
+	const {status} = response;
 	response.json()
 		.then(content => {
+			if(String(status).substring(0, 1) !== '2'){
+				showDialog(content.message);
+				return;
+			}
+
 			this.decks = content.decks;
 
 			const deckList = document.getElementById('deck-list');
@@ -19,9 +25,9 @@ fetch('https://localhost:3000/decks', {
 // eslint-disable-next-line no-undef
 const dialogControl = new DialogControl();
 
-function showMissingWordMessage() {
+function showDialog(message) {
 	dialogControl.setTitle('Warning');
-	dialogControl.setMessage('Please, select a word!');
+	dialogControl.setMessage(message);
 	dialogControl.setButton1('', () => {});
 	dialogControl.setButton2('Ok', () => dialogControl.hide());
 	dialogControl.setWidth(350);
@@ -62,7 +68,7 @@ function selectWord(wordElement){
 
 async function searchWord(){
 	if(!this.selectedWord){
-		showMissingWordMessage();
+		showDialog('Please, select a word!');
 		return;
 	}else{
 		const deckList = document.getElementById('deck-list');
