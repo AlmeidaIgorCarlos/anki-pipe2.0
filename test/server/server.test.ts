@@ -183,13 +183,8 @@ describe('server.ts', () => {
 				':path': '/'
 			});
 
-			const response = await homeController.handle({});
-
+			await homeController.handle({});
 			assert(stream.respond.called);
-			assert(stream.respond.calledWith({
-				'content-type': 'text/html; charset=utf-8',
-				':status': response.statusCode
-			}));
 		});
 
 		it('if template engine exists, render should be called with correct params', async () => {
