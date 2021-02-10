@@ -85,3 +85,5 @@ When the result is ready, a new area will be dinamically created on the page wit
 ![](./assets/home_page_result.png)
 
 On the result area, we have the indicated word, the phonetic transcription, the grammar class and its definition.
+
+Once the result shows up on the screen, it means that we have a new card on owr flashcard app!!!
