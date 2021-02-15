@@ -1,4 +1,7 @@
 import {ServerPush} from '../contracts/server-push';
+import { constants as http2Constants } from 'http2';
+
+const NGHTTP2_REFUSED_STREAM = http2Constants.NGHTTP2_REFUSED_STREAM;
 
 export class StylePusher implements ServerPush{
 	pushAssets(stream: any, contentBody: string): void {
@@ -26,6 +29,13 @@ export class StylePusher implements ServerPush{
 					localStream.respondWithFile(assetUrl, {
 						'status': 200,
 					});
+
+					localStream.on('error', (err: any) => {
+						const isRefusedStream = err.code === 'ERR_HTTP2_STREAM_ERROR' &&
+												localStream.rstCode === NGHTTP2_REFUSED_STREAM;
+						if (!isRefusedStream)
+						  throw err;
+					  });
 				});
 			});
 	}

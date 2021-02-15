@@ -8,7 +8,6 @@ import { Sentence } from '../../domain/sentence';
 import Anki from '../../repositories/anki';
 import { HttpRequest } from '../contracts/http-request';
 import { HttpResponse } from '../contracts/http-response';
-import { NotFoundError } from '../errors/not-found-error';
 import { BaseController } from './base-controller';
 
 export class SearchController extends BaseController{
