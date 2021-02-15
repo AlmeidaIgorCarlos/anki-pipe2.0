@@ -20,15 +20,8 @@ export class SearchController extends BaseController{
         
 		const card: Card = await sentenceEntity.searchForWord();
 		await card.save(anki);
-        
-		return {
-			statusCode: 200,
-			body: JSON.stringify(card),
-			headers:{
-				'Content-Type': 'application/json'
-			}
-		};
 
+		return this.json().ok(card);
 	}
 
 }
