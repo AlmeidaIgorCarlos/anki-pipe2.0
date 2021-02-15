@@ -53,4 +53,8 @@ export class BaseController implements Controller {
 	ok (body: any, headers?: any): HttpResponse {
 		return this.response(200, body, headers);
 	}
+
+	notFound (body: any, headers?: any): HttpResponse {
+		return this.response(404, body, headers);
+	}
 }

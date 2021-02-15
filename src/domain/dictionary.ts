@@ -1,4 +1,3 @@
-import { workerData } from 'worker_threads';
 import { Definition } from './definition';
 import { Example } from './example';
 import { GrammarClass } from './grammar-class';

@@ -95,9 +95,14 @@ async function searchWord(){
 			})
 		});
 
-		delete this.selectedWord;
+		const { status } = response;
 
 		response = await response.json();
+
+		if(String(status).substring(0, 1) !== '2'){
+			showDialog(response.message);
+			return;
+		}
 
 		const fatherElement = document.createElement('section');
 		fatherElement.setAttribute('id', 'result-element');

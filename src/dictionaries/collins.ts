@@ -7,6 +7,7 @@ import { Definition } from '../domain/definition';
 import { GrammarClass } from '../domain/grammar-class';
 import { UninitializedError } from '../server/errors/uninitialized-error';
 import { Example } from '../domain/example';
+import { WordNotFoundError } from '../domain/errors/word-not-found-error';
 
 export class Collins implements Dictionary{
 
@@ -30,11 +31,15 @@ export class Collins implements Dictionary{
                 
     			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     			if(res.statusCode && res.statusCode.toString()[0] !== '2')
-    				reject(new NotFoundError);
+    				reject(new WordNotFoundError());
                 
     			res.on('end', ()=>{
-    				this.$ = cheerio.load(websiteContent);
-    			    resolve(websiteContent);
+    				if (!websiteContent) { 
+    					reject(new WordNotFoundError());
+    				} else {
+    					this.$ = cheerio.load(websiteContent);
+    					resolve(websiteContent);
+    				}
     			});
     		}).on('error', (err)=>reject(err));
     	});
