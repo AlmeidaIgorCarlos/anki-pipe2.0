@@ -1,7 +1,6 @@
 import https from 'https';
 import {Dictionary} from '../domain/dictionary';
 import cheerio from 'cheerio';
-import { NotFoundError } from '../server/errors/not-found-error';
 import { Pronunciation } from '../domain/pronunciation';
 import { Definition } from '../domain/definition';
 import { GrammarClass } from '../domain/grammar-class';
@@ -91,7 +90,7 @@ export class Collins implements Dictionary{
     	for(let i=0; i<cheerioElements.length; i++){
     		grammarClasses.push(new GrammarClass(cheerioElements[i].children[0].data));
     	}
-
+		
     	return grammarClasses;
     }
 	
