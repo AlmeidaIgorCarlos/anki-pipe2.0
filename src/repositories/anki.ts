@@ -48,7 +48,7 @@ class Anki implements Repository{
 			});	
 
 			request.on('error', ()=>{
-				reject();
+				reject(new AnkiConnectionError());
 			});
 			
 			request.write(JSON.stringify({
@@ -59,9 +59,6 @@ class Anki implements Repository{
 			request.end();
 
 		});
-
-		if(!response)
-			throw new AnkiConnectionError();
 	
 		return response;
 	}
