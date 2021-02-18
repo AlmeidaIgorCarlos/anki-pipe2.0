@@ -2,6 +2,7 @@ import { Collins } from '../../dictionaries/collins';
 import { Card } from '../../domain/card';
 import { DefaultAnkiCardTheme } from '../../domain/default-anki-card-theme';
 import { Dictionary } from '../../domain/dictionary';
+import { WordNotFoundError } from '../../domain/errors/word-not-found-error';
 import Repository from '../../domain/repository';
 import { Sentence } from '../../domain/sentence';
 import Anki from '../../repositories/anki';
@@ -18,17 +19,18 @@ export class SearchController extends BaseController{
         
 		const anki: Repository = new Anki(deckName, new DefaultAnkiCardTheme());
         
-		const card: Card = await sentenceEntity.searchForWord();
-		await card.save(anki);
-        
-		return {
-			statusCode: 200,
-			body: JSON.stringify(card),
-			headers:{
-				'Content-Type': 'application/json'
+		try {
+			const card: Card = await sentenceEntity.searchForWord();
+			await card.save(anki);
+	
+			return this.json().ok(card);
+		} catch (err) {
+			if (err instanceof WordNotFoundError) {
+				return this.json().notFound({ message: err.message });
 			}
-		};
-
+			return this.json().serverError({
+				message: 'an unknown error occurred while searching for the word'
+			});
+		}
 	}
-
 }

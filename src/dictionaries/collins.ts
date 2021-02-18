@@ -1,12 +1,12 @@
 import https from 'https';
 import {Dictionary} from '../domain/dictionary';
 import cheerio from 'cheerio';
-import { NotFoundError } from '../server/errors/not-found-error';
 import { Pronunciation } from '../domain/pronunciation';
 import { Definition } from '../domain/definition';
 import { GrammarClass } from '../domain/grammar-class';
 import { UninitializedError } from '../server/errors/uninitialized-error';
 import { Example } from '../domain/example';
+import { WordNotFoundError } from '../domain/errors/word-not-found-error';
 
 export class Collins implements Dictionary{
 
@@ -30,11 +30,15 @@ export class Collins implements Dictionary{
                 
     			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     			if(res.statusCode && res.statusCode.toString()[0] !== '2')
-    				reject(new NotFoundError);
+    				reject(new WordNotFoundError());
                 
     			res.on('end', ()=>{
-    				this.$ = cheerio.load(websiteContent);
-    			    resolve(websiteContent);
+    				if (!websiteContent) { 
+    					reject(new WordNotFoundError());
+    				} else {
+    					this.$ = cheerio.load(websiteContent);
+    					resolve(websiteContent);
+    				}
     			});
     		}).on('error', (err)=>reject(err));
     	});
@@ -86,7 +90,7 @@ export class Collins implements Dictionary{
     	for(let i=0; i<cheerioElements.length; i++){
     		grammarClasses.push(new GrammarClass(cheerioElements[i].children[0].data));
     	}
-
+		
     	return grammarClasses;
     }
 	

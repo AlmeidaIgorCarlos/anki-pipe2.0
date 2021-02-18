@@ -46,10 +46,10 @@ export class Sentence extends Element{
 		
     	grammarClasses.forEach((gC, index) => {
     		card.pushChild(gC);
-    		gC.pushChild(examples[index]);
-    		gC.pushChild(definitions[index]);
+    		if (examples[index]) gC.pushChild(examples[index]);
+    		if (definitions[index]) gC.pushChild(definitions[index]);
     	});
-        
+
     	return card;
     }
 }

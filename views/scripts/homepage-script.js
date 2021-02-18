@@ -5,7 +5,7 @@ fetch('https://localhost:3000/decks', {
 	response.json()
 		.then(content => {
 			if(String(status).substring(0, 1) !== '2'){
-				showDialog(content.message);
+				showPersistentDialog(content.message);
 				return;
 			}
 
@@ -31,6 +31,15 @@ function showDialog(message) {
 	dialogControl.setButton1('', () => {});
 	dialogControl.setButton2('Ok', () => dialogControl.hide());
 	dialogControl.setWidth(350);
+	dialogControl.show();
+}
+
+function showPersistentDialog(message) {
+	dialogControl.setTitle('Warning');
+	dialogControl.setMessage(message);
+	dialogControl.setButton1('', () => {});
+	dialogControl.setButton2('Reload', () =>  location.reload());
+	dialogControl.setWidth(400);
 	dialogControl.show();
 }
 
@@ -86,9 +95,14 @@ async function searchWord(){
 			})
 		});
 
-		delete this.selectedWord;
+		const { status } = response;
 
 		response = await response.json();
+
+		if(String(status).substring(0, 1) !== '2'){
+			showDialog(response.message);
+			return;
+		}
 
 		const fatherElement = document.createElement('section');
 		fatherElement.setAttribute('id', 'result-element');
