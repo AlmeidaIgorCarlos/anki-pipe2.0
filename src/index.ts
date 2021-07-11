@@ -13,6 +13,7 @@ import { ScriptPusher } from './server/server-push/script-pusher';
 import { StylePusher } from './server/server-push/style-pusher';
 import { SearchController } from './server/controllers/search-controller';
 import { DeckController } from './server/controllers/deck-controller';
+import { SimpleStaticFiles } from './server/simple-static-files';
 
 const server = new http.Server(
 	{
@@ -21,7 +22,12 @@ const server = new http.Server(
 		genericServerError: container.get<ServerError>(TYPES.GenericServerError),
 		notFoundServerError: container.get<ServerError>(TYPES.NotFoundServerError),
 		templateEngine: makeEjsTemplateEngine(),
-		serverPushers: [new ScriptPusher(), new StylePusher()]
+		serverPushers: [new ScriptPusher(), new StylePusher()],
+		allowHTTP1: true,
+		staticFiles: new SimpleStaticFiles([
+			'/views/scripts',
+			'/views/styles'
+		])
 	}, [
 		new Route(
 			Methods.GET,

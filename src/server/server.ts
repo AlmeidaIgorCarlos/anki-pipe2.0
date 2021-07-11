@@ -1,4 +1,4 @@
-import http2, { Http2SecureServer, ServerHttp2Stream } from 'http2';
+import http2, { Http2SecureServer, Http2ServerRequest, Http2ServerResponse, ServerHttp2Stream } from 'http2';
 import url from 'url';
 import assert from 'assert';
 import { HttpResponse } from './contracts/http-response';
@@ -9,9 +9,15 @@ import { ServerError } from './contracts/server-error';
 import { TemplateEngine } from './contracts/template-engine';
 import { BaseController } from './controllers/base-controller';
 import { ServerPush } from './contracts/server-push';
+import fs from 'fs';
+import path from 'path';
+import { promisify } from 'util';
+import { adaptStream } from './adapters/adapt-stream';
+import { adaptHeaders } from './adapters/adapt-headers';
 
 export class Server {
 	private readonly http2: Http2SecureServer;
+	private readonly options: ServerOptions;
 	private readonly routes: Route[];
 	private readonly genericServerError: ServerError;
 	private readonly notFoundServerError: ServerError;
@@ -22,6 +28,7 @@ export class Server {
 		options: ServerOptions,
 		routes?: Route[]
 	) {
+		this.options = options;
 		this.http2 = http2.createSecureServer(options);
 		this.routes = routes ? routes : [];
 		this.genericServerError = options.genericServerError;
@@ -31,6 +38,12 @@ export class Server {
 	}
 
 	public listen (port: number): Http2SecureServer {
+		if (this.options.allowHTTP1) {
+			this.http2.on('request', (req, res) => {
+				if (req.httpVersion === '1.1')
+					this._main(adaptStream(req, res), adaptHeaders(req));
+			});
+		}
 		this.http2.on('stream', this._main);
 		this.http2.listen(port);
 		return this.http2;
@@ -54,6 +67,12 @@ export class Server {
 	
 		assert(pathname);
 
+		const file = await this.options.staticFiles?.getFile(pathname);
+		if (file) {
+			stream.end(file);
+			return;
+		}
+
 		const body = await new Promise((resolve) => {
 			let result = '';
 
@@ -67,7 +86,7 @@ export class Server {
 			});
 
 		});
-	
+		
 		const route: Route = this.findRoute(new Route(method, pathname, new BaseController()));
 
 		const httpRequest = {
@@ -77,28 +96,32 @@ export class Server {
 			query: query
 		};
 	
+		console.log(body);
+		
 		const httpResponse: HttpResponse = await route.controller.handle(httpRequest);
-
+	
 		if (this.templateEngine) {
 			httpResponse.body = await this.templateEngine.render(httpResponse.body, httpResponse.data);
 			if(this.serverPushers){
 				this.serverPushers.forEach(pusher => pusher.pushAssets(stream, httpResponse.body));
 			}
 		}
-	
+		
 		stream.respond({
 			'Content-Type': 'text/html; charset=utf-8',
 			':status': httpResponse.statusCode,
 			...httpResponse.headers,
 		});
-
-		stream.end(httpResponse.body);
+	
+		stream.end(httpResponse.body);	
+		
 	}
 
 	public _main = async (stream: ServerHttp2Stream, headers: any) => {
 		try {
 			await this.onConnect(stream, headers);
 		} catch (err) {
+			console.log(err);
 			if (err instanceof NotFoundError) {
 				this.notFoundServerError.handle(stream, err);
 			} else {
